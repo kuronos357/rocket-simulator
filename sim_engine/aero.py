@@ -18,39 +18,35 @@ except ImportError:
 
 def load_rocket_mesh(file_path):
     """
-    STL, STEP (.step/.stp), 3MF から最適なメッシュをロードする。
-    同名の .step ファイルがあれば、STL より高精度な STEP を優先使用する。
+    STL, STEP (.step/.stp), 3MF からメッシュをロードする。
+    指定されたファイル形式を忠実に読み込み、極薄フィン（0.5mm等）の欠落を防ぐ。
     """
-    # 同名の STEP ファイルがあるか確認
     base_no_ext, ext = os.path.splitext(file_path)
-    step_candidates = [file_path] if ext.lower() in [".step", ".stp"] else [
-        base_no_ext + ".step",
-        base_no_ext + ".stp"
-    ]
     
-    for sc in step_candidates:
-        if os.path.exists(sc) and HAS_CASCADIO:
-            print(f"[AeroEngine] STEP ファイルを検出: {os.path.basename(sc)} (高精度B-Rep解析モード)")
+    # STEP が明示的に指定された場合
+    if ext.lower() in [".step", ".stp"]:
+        if HAS_CASCADIO:
+            print(f"[AeroEngine] STEP ファイルをロード: {os.path.basename(file_path)}")
             import shutil
             with tempfile.TemporaryDirectory() as tmpdir:
                 ascii_step = os.path.join(tmpdir, "model.step")
                 ascii_glb = os.path.join(tmpdir, "model.glb")
-                shutil.copy(sc, ascii_step)
+                shutil.copy(file_path, ascii_step)
                 try:
-                    # 0.01mm 精度でテッセレーション
-                    cascadio.step_to_glb(ascii_step, ascii_glb, tol_linear=0.01, tol_angular=0.5)
+                    cascadio.step_to_glb(ascii_step, ascii_glb, tol_linear=0.005, tol_angular=0.2)
                     scene = trimesh.load(ascii_glb)
                     mesh = scene.to_geometry()
                     if isinstance(mesh, list):
                         mesh = trimesh.util.concatenate(mesh)
                     elif isinstance(mesh, trimesh.Scene):
                         mesh = mesh.dump(concatenate=True)
-                    # 単位がメートルなら mm (x1000) に変換
                     if mesh.extents[1] < 1.0:
                         mesh.apply_scale(1000.0)
                     return mesh
                 except Exception as e:
-                    print(f"[AeroEngine] STEP 読み込みエラー ({e})。STL にフォールバックします。")
+                    print(f"[AeroEngine] STEP 読み込みエラー ({e})。STL があればそちらを使用してください。")
+        else:
+            print("[AeroEngine] cascadio がインストールされていません。STL を使用してください。")
 
     # 3MF の場合
     if ext.lower() == ".3mf":
@@ -60,7 +56,7 @@ def load_rocket_mesh(file_path):
             return scene.dump(concatenate=True)
         return scene
 
-    # STL の場合
+    # STL の場合 (デフォルト: Fusion 360 のハイメッシュ STL を忠実に読み込み)
     return trimesh.load(file_path, force="mesh")
 
 
