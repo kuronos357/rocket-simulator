@@ -70,8 +70,41 @@ class AeroEngine:
         # Load mesh via load_rocket_mesh (STL, STEP, or 3MF)
         self.mesh = load_rocket_mesh(stl_path)
         
+        # 内部パーツ（モーター、ストリーマ）の自動除外
+        self._clean_internal_components()
+        
         # Align mesh coordinates so that flight axis is Z-axis (forward = +Z)
         self._align_mesh_to_standard_z()
+
+    def _clean_internal_components(self):
+        """
+        CADエクスポート時にSTL内に混入した内部パーツ（モーターやストリーマ）を自動検出し、
+        純粋な外表面スキンメッシュだけを抽出する。
+        """
+        try:
+            bodies = self.mesh.split(only_watertight=False)
+            if len(bodies) <= 1:
+                return
+
+            clean_components = []
+            removed_count = 0
+            for b in bodies:
+                r_max = float(np.sqrt(b.vertices[:, 0]**2 + b.vertices[:, 2]**2).max())
+                # モーター判定 (直径18mm, 半径9mm以内, 長さ70mm)
+                is_motor = bool(b.bounds[0][1] >= -1.0 and b.bounds[1][1] <= 75.0 and r_max <= 9.2 and len(b.faces) < 1000)
+                # ストリーマ判定 (半径8.5mm以内, 胴体内部)
+                is_streamer = bool(b.bounds[0][1] >= 65.0 and b.bounds[1][1] <= 180.0 and r_max <= 8.5)
+                
+                if is_motor or is_streamer:
+                    removed_count += 1
+                else:
+                    clean_components.append(b)
+                    
+            if clean_components and removed_count > 0:
+                print(f"[AeroEngine] 内部パーツ ({removed_count}個) を自動除外し、外表面スキンを抽出しました。")
+                self.mesh = trimesh.util.concatenate(clean_components)
+        except Exception:
+            pass
 
     def _align_mesh_to_standard_z(self):
         """Standardize coordinates: +Z is flight direction (nose), origin at tail, maintaining right-handed chirality"""
