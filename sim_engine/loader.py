@@ -76,21 +76,34 @@ class RocketModel:
                     p["moi_g_cm2"] = {k: v * scale for k, v in p["moi_g_cm2"].items()}
 
     def _detect_flight_axis(self):
-        """全体の寸法からロケットの長軸（飛行軸）を特定"""
+        """全体の寸法（全パーツのバウンディングボックス合成）からロケットの長軸（飛行軸）と全長を特定"""
         bodies = self.raw_data.get("bodies", [])
-        max_extent = {"x": 0.0, "y": 0.0, "z": 0.0}
+        min_coords = {"x": float('inf'), "y": float('inf'), "z": float('inf')}
+        max_coords = {"x": float('-inf'), "y": float('-inf'), "z": float('-inf')}
         
+        found = False
         for b in bodies:
             if not b.get("is_visible", True):
                 continue
-            sz = b.get("size_mm", {})
+            b_min = b.get("bbox_min_mm", {})
+            b_max = b.get("bbox_max_mm", {})
             for axis in ["x", "y", "z"]:
-                if sz.get(axis, 0.0) > max_extent[axis]:
-                    max_extent[axis] = sz.get(axis, 0.0)
-                    
-        # 最大の軸を選択
-        self.flight_axis = max(max_extent, key=max_extent.get)
-        self.total_length_mm = max_extent[self.flight_axis]
+                if axis in b_min and axis in b_max:
+                    found = True
+                    if b_min[axis] < min_coords[axis]:
+                        min_coords[axis] = b_min[axis]
+                    if b_max[axis] > max_coords[axis]:
+                        max_coords[axis] = b_max[axis]
+                        
+        if found:
+            extents = {axis: max_coords[axis] - min_coords[axis] for axis in ["x", "y", "z"]}
+            self.flight_axis = max(extents, key=extents.get)
+            self.total_length_mm = extents[self.flight_axis]
+            self.bbox_min_mm = min_coords
+            self.bbox_max_mm = max_coords
+        else:
+            self.flight_axis = "y"
+            self.total_length_mm = 250.0
 
     def _process_bodies(self):
         bodies = self.raw_data.get("bodies", [])
@@ -222,8 +235,20 @@ class RocketModel:
         for p in self.parts:
             cg += p["mass_g"] * p["com_mm"]
         self.cg_mm = cg / total_mass
-        self.dry_mass_g = total_mass - (self.motor_part["motor_data"].propellant_mass_g if self.motor_part else 0.0)
+        
+        # モーター抜きの機体乾燥質量 (Airframe + Payload + Streamer)
+        self.airframe_mass_g = sum(p["mass_g"] for p in self.parts if p.get("type") != "motor")
+        self.dry_mass_g = self.airframe_mass_g # モーター無しの機体乾燥質量
+        
+        # 推進剤質量
+        prop_mass = self.motor_part["motor_data"].propellant_mass_g if self.motor_part else 0.0
+        self.propellant_mass_g = prop_mass
+        
+        # 点火時総質量 (機体 + モーター全質量)
         self.launch_mass_g = total_mass
+        
+        # 燃焼終了時総質量 (機体 + モーター空ケース質量)
+        self.burnout_mass_g = total_mass - prop_mass
         
         # 慣性モーメントの合成 (g*cm2)
         # 距離は mm なので cm に変換 ( / 10.0 )

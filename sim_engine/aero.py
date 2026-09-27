@@ -78,43 +78,43 @@ class AeroEngine:
         self._align_mesh_to_standard_z()
 
     def _align_mesh_to_standard_z(self):
-        """Standardize coordinates: +Z is flight direction (nose), origin at tail or center"""
-        vertices = np.copy(self.mesh.vertices)
-        
-        # If flight axis is Y: map (x, y, z) -> (x, z, y) so Y becomes Z
+        """Standardize coordinates: +Z is flight direction (nose), origin at tail, maintaining right-handed chirality"""
+        # Determine rotation matrix R (det(R) = +1) to orient flight axis to +Z
         if self.flight_axis == "y":
-            vertices = vertices[:, [0, 2, 1]]
+            # Map Y -> +Z, preserving right-handed frame (det = +1)
+            # x_new = -x, y_new = z, z_new = y
+            R = np.array([
+                [-1.0,  0.0,  0.0],
+                [ 0.0,  0.0,  1.0],
+                [ 0.0,  1.0,  0.0]
+            ], dtype=float)
         elif self.flight_axis == "x":
-            vertices = vertices[:, [1, 2, 0]]
-            
-        self.std_vertices = vertices # in mm
-        self.std_normals = np.copy(self.mesh.face_normals)
-        if self.flight_axis == "y":
-            self.std_normals = self.std_normals[:, [0, 2, 1]]
-        elif self.flight_axis == "x":
-            self.std_normals = self.std_normals[:, [0, 2, 1]]
-            
-        # Ensure faces point outward
+            # Map X -> +Z, preserving right-handed frame (det = +1)
+            # x_new = z, y_new = y, z_new = -x
+            R = np.array([
+                [ 0.0,  0.0,  1.0],
+                [ 0.0,  1.0,  0.0],
+                [-1.0,  0.0,  0.0]
+            ], dtype=float)
+        else:
+            R = np.eye(3, dtype=float)
+
+        self.R = R
+        self.std_vertices = np.dot(self.mesh.vertices, R.T)
+        self.std_normals = np.dot(self.mesh.face_normals, R.T)
+        self.face_centers_mm = np.dot(self.mesh.triangles_center, R.T)
         self.face_areas_m2 = self.mesh.area_faces * 1e-6 # mm2 -> m2
-        self.face_centers_mm = np.copy(self.mesh.triangles_center)
-        if self.flight_axis == "y":
-            self.face_centers_mm = self.face_centers_mm[:, [0, 2, 1]]
-        elif self.flight_axis == "x":
-            self.face_centers_mm = self.face_centers_mm[:, [1, 2, 0]]
-            
+
         # Determine orientation: min Z is tail (motor), max Z is nose
-        self.z_min = np.min(self.std_vertices[:, 2])
-        self.z_max = np.max(self.std_vertices[:, 2])
-        
-        # Calculate frontal area (projected area on XY plane)
-        # Using bounding radius of fuselage if available, or 2D polygon projection
+        self.z_min = float(np.min(self.std_vertices[:, 2]))
+        self.z_max = float(np.max(self.std_vertices[:, 2]))
         self.total_length_m = (self.z_max - self.z_min) * 1e-3
 
     def compute_aerodynamics(self, velocity_m_s, alpha_deg=2.0, beta_deg=0.0, cg_z_mm=None):
         """
-        Compute aerodynamic forces and CP at given velocity and angle of attack.
-        velocity_m_s: Flight speed (e.g. 50 m/s)
-        alpha_deg: Pitch angle of attack in degrees
+        Compute aerodynamic forces, roll torque, and CP at given velocity and angle of attack.
+        velocity_m_s: Flight speed (e.g. 40 m/s)
+        alpha_deg: Pitch angle of attack in degrees (nose pitches towards +Y)
         beta_deg: Yaw angle in degrees
         cg_z_mm: Center of Gravity Z coordinate in mm from tail
         """
@@ -124,90 +124,77 @@ class AeroEngine:
         alpha_rad = np.radians(alpha_deg)
         beta_rad = np.radians(beta_deg)
         
-        # Inflow direction vector (relative wind coming towards the rocket)
-        # Rocket flying roughly towards +Z with small pitch/yaw
+        # Inflow direction vector (direction air flows in body frame: mainly towards -Z, with +Y when pitched up)
         wind_dir = np.array([
             -np.sin(beta_rad),
-            -np.sin(alpha_rad),
+             np.sin(alpha_rad),
             -np.cos(alpha_rad) * np.cos(beta_rad)
-        ])
+        ], dtype=float)
         wind_dir = wind_dir / np.linalg.norm(wind_dir)
         
         air_density = 1.225 # kg/m3
         q = 0.5 * air_density * (velocity_m_s**2)
         
-        # Panel integration
-        # Dot product with face normals: cos_theta > 0 means face is facing the wind
+        # Dot product with face normals: cos_theta > 0 means face is facing the oncoming wind
         normals = self.std_normals
-        cos_theta = np.dot(normals, -wind_dir)
+        cos_theta = -np.dot(normals, wind_dir)
         
-        # Pressure coefficient (modified impact + suction model for subsonic flow)
-        # For windward surfaces, Cp ~ 2 * sin^2(deflection) + base drag
-        # Skin friction Cf ~ 0.004 (subsonic turbulent boundary layer)
-        Cf = 0.0045
+        # Panel normal force and moment integration
+        normals = self.std_normals
+        cos_theta = -np.dot(normals, wind_dir)
         
-        # Windward faces
-        windward_mask = cos_theta > 0.0
+        # Subsonic linear differential pressure model for fins & lifting surfaces:
+        # Windward faces: positive pressure (Cp ~ 2.0 * cos_theta)
+        # Leeward faces: suction/depression (Cp ~ 1.0 * cos_theta)
+        Cp_lat = np.zeros_like(cos_theta)
+        windward = cos_theta > 0.0
+        Cp_lat[windward] = 2.0 * cos_theta[windward]
+        Cp_lat[~windward] = 1.0 * cos_theta[~windward]
         
-        # Normal force on each face: F_norm = q * Cp * Area * normal
-        # Approximate subsonic pressure distribution
-        Cp = np.zeros_like(cos_theta)
-        Cp[windward_mask] = 1.8 * (cos_theta[windward_mask]**1.5)
-        
-        # Total force on each triangle (Pressure + Friction)
-        F_faces = np.zeros_like(normals)
-        
-        # Pressure force (acts inward along normal)
-        F_faces += -normals * (q * Cp[:, np.newaxis] * self.face_areas_m2[:, np.newaxis])
-        
-        # Friction force (acts along wind direction parallel to surface)
-        # Tangential velocity vector
-        norm_proj = np.sum(wind_dir * normals, axis=1)[:, np.newaxis] * normals
-        tangent_dir = wind_dir - norm_proj
-        tan_norm = np.linalg.norm(tangent_dir, axis=1, keepdims=True)
-        tan_norm[tan_norm == 0] = 1.0
-        tangent_unit = tangent_dir / tan_norm
-        
-        F_fric = tangent_unit * (q * Cf * self.face_areas_m2[:, np.newaxis])
-        F_faces += F_fric
-        
-        # Integrate total force
-        F_total = np.sum(F_faces, axis=0) # [Fx, Fy, Fz]
-        
-        # Decompose into Drag (along wind), Lift/Normal (perpendicular)
-        Drag = -np.dot(F_total, wind_dir)
-        F_perp = F_total - (-Drag * wind_dir)
-        Normal_force = np.linalg.norm(F_perp)
+        # Pressure forces (normal to face)
+        F_faces = -normals * (q * Cp_lat[:, np.newaxis] * self.face_areas_m2[:, np.newaxis])
         
         # Aerodynamic moments around CG
-        # r = face_center - CG
         cg_pos = np.array([0.0, 0.0, cg_z_mm])
         r_vectors_m = (self.face_centers_mm - cg_pos) * 1e-3 # mm -> m
         moments = np.cross(r_vectors_m, F_faces)
         M_total = np.sum(moments, axis=0) # [Mx, My, Mz] (Mz is Roll torque!)
         
-        Roll_torque = M_total[2]
-        Pitch_moment = M_total[0]
+        Roll_torque = float(M_total[2])
+        Pitch_moment = float(M_total[0])
+        
+        # Lateral normal force (Fy in pitch plane)
+        F_total = np.sum(F_faces, axis=0)
+        Fy_total = float(F_total[1])
+        Normal_force = float(np.linalg.norm([F_total[0], F_total[1]]))
         
         # Calculate Center of Pressure (CP) Z coordinate
-        # M_pitch = Normal_force_y * (CP_z - CG_z)
-        if abs(F_total[1]) > 1e-4:
-            cp_z_offset_m = -M_total[0] / F_total[1]
+        # M_pitch = - (CP_z - CG_z) * Fy_total
+        if abs(Fy_total) > 1e-4:
+            cp_z_offset_m = -Pitch_moment / Fy_total
             cp_z_mm = cg_z_mm + (cp_z_offset_m * 1000.0)
         else:
-            # When alpha is tiny, estimate by centroid of lateral projected area
             cp_z_mm = np.mean(self.face_centers_mm[:, 2])
             
-        # Nondimensional coefficients
-        Cd = Drag / (q * self.ref_area_m2) if q > 0 else 0.4
+        # Axial Drag Calculation (Hoerner subsonic aerodynamic breakdown):
+        # 1. Skin friction (turbulent boundary layer over total wetted area)
+        total_wet_area = np.sum(self.face_areas_m2)
+        Cd_fric = 0.0045 * (total_wet_area / self.ref_area_m2) if self.ref_area_m2 > 0 else 0.35
+        # 2. Base drag (flow separation at rear/tail area)
+        base_area = np.sum(self.face_areas_m2 * np.maximum(0, -normals[:, 2]))
+        Cd_base = 0.12 * (base_area / self.ref_area_m2) if self.ref_area_m2 > 0 else 0.10
+        # 3. Nose form pressure drag
+        Cd_nose = 0.08
+        # 4. Induced drag due to lift/normal force: Cdi ~ (Cn^2) / (pi * AR) ~ Cn * sin(alpha)
+        Cn = Fy_total / (q * self.ref_area_m2) if (q > 0 and self.ref_area_m2 > 0) else 0.0
+        Cd_induced = abs(Cn * np.sin(alpha_rad))
         
-        # Clamp Cd to realistic model rocket ranges (0.35 ~ 0.75)
+        Cd = Cd_fric + Cd_base + Cd_nose + Cd_induced
         Cd = max(0.35, min(1.2, float(Cd)))
+        Drag = float(q * self.ref_area_m2 * Cd)
         
         # Stability margin in Calibers (Reference diameter units)
-        # Safe if CP is behind CG (cp_z_mm < cg_z_mm if nose is at max Z, or vice versa)
-        # Note: In our std coordinates, Tail=min_Z, Nose=max_Z.
-        # CP behind CG means CP is closer to Tail -> cp_z_mm < cg_z_mm.
+        # Safe if CP is behind CG (cp_z_mm < cg_z_mm, closer to tail)
         margin_mm = cg_z_mm - cp_z_mm
         margin_cal = margin_mm / self.ref_diameter_mm
         

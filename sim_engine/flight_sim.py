@@ -40,6 +40,8 @@ class FlightSimulator:
         rod_cleared = False
         max_vel_m_s = 0.0
         max_acc_g = 0.0
+        landing_speed_m_s = 0.0
+        landing_time_s = 0.0
         ejection_triggered = False
         ejection_time_s = 0.0
         ejection_alt_m = 0.0
@@ -171,8 +173,9 @@ class FlightSimulator:
             real_apogee_alt = z
             real_apogee_time = t
 
-        # Terminal descent speed
-        terminal_vel_m_s = np.sqrt((2.0 * current_mass_kg * self.g) / (self.air_density * max(1e-4, descent_CdS)))
+        # Terminal descent speed based on actual burnout descent mass
+        descent_mass_kg = getattr(self.model, "burnout_mass_g", current_mass_kg * 1000.0) * 1e-3
+        terminal_vel_m_s = np.sqrt((2.0 * descent_mass_kg * self.g) / (self.air_density * max(1e-4, descent_CdS)))
 
         return {
             "apogee_alt_m": round(real_apogee_alt, 2),
@@ -186,6 +189,7 @@ class FlightSimulator:
             "ejection_alt_m": round(ejection_alt_m, 2),
             "ejection_vel_m_s": round(ejection_vel_m_s, 2),
             "terminal_velocity_m_s": round(terminal_vel_m_s, 2),
+            "landing_speed_m_s": round(landing_speed_m_s if landing_speed_m_s > 0 else terminal_vel_m_s, 2),
             "total_flight_time_s": round(t, 2),
             "time_series": {
                 "t": time_log,
