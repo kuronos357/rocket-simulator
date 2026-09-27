@@ -25,7 +25,13 @@ def main():
     
     # 1. JSONファイルの検索
     if len(sys.argv) > 1:
-        json_path = sys.argv[1]
+        target_arg = sys.argv[1]
+        if target_arg.endswith(".stl") or target_arg.endswith(".step"):
+            base = os.path.splitext(target_arg)[0]
+            candidate = f"{base}_params.json"
+            json_path = candidate if os.path.exists(candidate) else target_arg
+        else:
+            json_path = target_arg
     else:
         json_files = glob.glob(os.path.join(export_dir, "*_params.json"))
         if not json_files:

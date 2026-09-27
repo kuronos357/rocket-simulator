@@ -30,9 +30,12 @@ def print_summary_report(model, aero_res, flight_res):
     print("-" * 60)
     print(f"  - Reference Drag Coeff (Cd)          : {aero_res['Cd']:.3f} (Drag: {aero_res['Drag_N']:.2f} N)")
     print(f"  - Center of Pressure (CP)            : {aero_res['CP_z_mm']:.2f} mm (from tail)")
-    print(f"  - Static Stability Margin            : {aero_res['margin_cal']:.2f} cal (Calibers)")
+    print(f"  - Static Stability Margin (Overall)  : {aero_res['margin_cal']:+.2f} cal ({aero_res.get('margin_mm', 0):+.1f} mm)")
+    if "pitch_margin_cal" in aero_res and "yaw_margin_cal" in aero_res:
+        print(f"    * Pitch Stability (Main Fins)      : {aero_res['pitch_margin_cal']:+.2f} cal (CP: {aero_res['pitch_cp_mm']:.1f} mm)")
+        print(f"    * Yaw Stability (Vertical Fin)     : {aero_res['yaw_margin_cal']:+.2f} cal (CP: {aero_res['yaw_cp_mm']:.1f} mm)")
     
-    status_str = "[OK] Stable (Ideal range 1.0 - 2.0 cal)" if aero_res['is_stable'] else "[WARN] Unstable (Nose ballast recommended)"
+    status_str = "[OK] Stable" if aero_res['is_stable'] else ("[△] Marginal / Weak" if aero_res['margin_cal'] >= 0.0 else "[WARN] Unstable (Nose ballast recommended)")
     print(f"  - Stability Check                    : {status_str}")
     if abs(aero_res['Roll_Torque_Nm']) > 1e-5:
         print(f"  - Asymmetric Fin Roll Torque         : {aero_res['Roll_Torque_Nm']*1000:.3f} mN*m (Spinning)")
