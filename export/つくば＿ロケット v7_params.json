@@ -1,0 +1,191 @@
+{
+  "design_name": "つくば＿ロケット v7",
+  "export_time": "2026-09-27T03:14:32.401160",
+  "stl_file": "つくば＿ロケット v7.stl",
+  "units": {
+    "length": "mm",
+    "mass": "g",
+    "volume": "cm3",
+    "area": "cm2",
+    "moments_of_inertia": "g*cm2"
+  },
+  "assembly_summary": {
+    "total_mass_g": 390.757,
+    "total_volume_cm3": 49.778,
+    "total_area_cm2": 357.1245,
+    "center_of_mass_mm": {
+      "x": 0.0,
+      "y": 61.085,
+      "z": 0.477
+    },
+    "moments_of_inertia_g_cm2": {
+      "Ixx": 21702.106,
+      "Iyy": 316.331,
+      "Izz": 21765.379
+    }
+  },
+  "bodies": [
+    {
+      "name": "Motor_1/2A6-2",
+      "parent": "RootComponent",
+      "part_type": "motor",
+      "material": "鋼",
+      "is_visible": true,
+      "mass_g": 139.831,
+      "mass_g_override": null,
+      "center_of_mass_mm": {
+        "x": 0.0,
+        "y": 35.0,
+        "z": -0.0
+      },
+      "size_mm": {
+        "x": 18.0,
+        "y": 70.0,
+        "z": 18.0
+      },
+      "bbox_min_mm": {
+        "x": -9.0,
+        "y": 0.0,
+        "z": -9.0
+      },
+      "bbox_max_mm": {
+        "x": 9.0,
+        "y": 70.0,
+        "z": 9.0
+      },
+      "volume_cm3": 17.8128,
+      "area_cm2": 44.6734,
+      "moments_of_inertia_g_cm2": {
+        "Ixx": 2312.217,
+        "Iyy": 56.631,
+        "Izz": 2312.217,
+        "Ixy": 0.0,
+        "Iyz": 0.0,
+        "Ixz": 0.0
+      },
+      "custom_params": {
+        "motor_id": "A6-2"
+      }
+    },
+    {
+      "name": "ボディ3",
+      "parent": "RootComponent",
+      "part_type": "structure",
+      "material": "鋼",
+      "is_visible": true,
+      "mass_g": 146.106,
+      "mass_g_override": null,
+      "center_of_mass_mm": {
+        "x": 0.0,
+        "y": 53.762,
+        "z": 0.099
+      },
+      "size_mm": {
+        "x": 80.0,
+        "y": 183.118,
+        "z": 50.5
+      },
+      "bbox_min_mm": {
+        "x": -40.0,
+        "y": 0.0,
+        "z": -14.5
+      },
+      "bbox_max_mm": {
+        "x": 40.0,
+        "y": 183.118,
+        "z": 36.0
+      },
+      "volume_cm3": 18.6122,
+      "area_cm2": 226.7446,
+      "moments_of_inertia_g_cm2": {
+        "Ixx": 6796.038,
+        "Iyy": 224.243,
+        "Izz": 6859.311,
+        "Ixy": -0.065,
+        "Iyz": 131.454,
+        "Ixz": 0.003
+      },
+      "custom_params": {}
+    },
+    {
+      "name": "ストリーマ",
+      "parent": "RootComponent",
+      "part_type": "structure",
+      "material": "鋼",
+      "is_visible": true,
+      "mass_g": 66.711,
+      "mass_g_override": null,
+      "center_of_mass_mm": {
+        "x": -0.0,
+        "y": 99.472,
+        "z": -0.0
+      },
+      "size_mm": {
+        "x": 15.992,
+        "y": 100.933,
+        "z": 15.992
+      },
+      "bbox_min_mm": {
+        "x": -7.996,
+        "y": 70.0,
+        "z": -7.996
+      },
+      "bbox_max_mm": {
+        "x": 7.996,
+        "y": 170.933,
+        "z": 7.996
+      },
+      "volume_cm3": 8.4982,
+      "area_cm2": 31.8257,
+      "moments_of_inertia_g_cm2": {
+        "Ixx": 6918.768,
+        "Iyy": 13.637,
+        "Izz": 6918.768,
+        "Ixy": 0.0,
+        "Iyz": 0.0,
+        "Ixz": 0.0
+      },
+      "custom_params": {}
+    },
+    {
+      "name": "ボディ32",
+      "parent": "RootComponent",
+      "part_type": "structure",
+      "material": "鋼",
+      "is_visible": true,
+      "mass_g": 38.11,
+      "mass_g_override": null,
+      "center_of_mass_mm": {
+        "x": -0.0,
+        "y": 117.676,
+        "z": 4.516
+      },
+      "size_mm": {
+        "x": 22.0,
+        "y": 119.73,
+        "z": 14.758
+      },
+      "bbox_min_mm": {
+        "x": -11.0,
+        "y": 70.0,
+        "z": -3.758
+      },
+      "bbox_max_mm": {
+        "x": 11.0,
+        "y": 189.73,
+        "z": 11.0
+      },
+      "volume_cm3": 4.8548,
+      "area_cm2": 53.8808,
+      "moments_of_inertia_g_cm2": {
+        "Ixx": 5675.082,
+        "Iyy": 21.82,
+        "Izz": 5675.082,
+        "Ixy": 0.019,
+        "Iyz": -183.94,
+        "Ixz": -0.001
+      },
+      "custom_params": {}
+    }
+  ]
+}

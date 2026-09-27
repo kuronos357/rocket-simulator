@@ -1,0 +1,192 @@
+{
+  "design_name": "つくば＿ロケットm2 v7",
+  "export_time": "2026-09-28T02:23:14.808373",
+  "stl_file": "つくば＿ロケットm2 v7.stl",
+  "step_file": "つくば＿ロケットm2 v7.step",
+  "units": {
+    "length": "mm",
+    "mass": "g",
+    "volume": "cm3",
+    "area": "cm2",
+    "moments_of_inertia": "g*cm2"
+  },
+  "assembly_summary": {
+    "total_mass_g": 388.286,
+    "total_volume_cm3": 49.4631,
+    "total_area_cm2": 334.8355,
+    "center_of_mass_mm": {
+      "x": -0.0,
+      "y": 99.236,
+      "z": 0.198
+    },
+    "moments_of_inertia_g_cm2": {
+      "Ixx": 59349.349,
+      "Iyy": 257.872,
+      "Izz": 59381.368
+    }
+  },
+  "bodies": [
+    {
+      "name": "胴体",
+      "parent": "RootComponent",
+      "part_type": "structure",
+      "material": "鋼",
+      "is_visible": true,
+      "mass_g": 106.703,
+      "mass_g_override": null,
+      "center_of_mass_mm": {
+        "x": -0.001,
+        "y": 83.514,
+        "z": -2.223
+      },
+      "size_mm": {
+        "x": 90.0,
+        "y": 180.0,
+        "z": 53.5
+      },
+      "bbox_min_mm": {
+        "x": -45.0,
+        "y": 0.0,
+        "z": -13.5
+      },
+      "bbox_max_mm": {
+        "x": 45.0,
+        "y": 180.0,
+        "z": 40.0
+      },
+      "volume_cm3": 13.5928,
+      "area_cm2": 190.7345,
+      "moments_of_inertia_g_cm2": {
+        "Ixx": 11259.293,
+        "Iyy": 129.553,
+        "Izz": 11291.904,
+        "Ixy": 0.064,
+        "Iyz": 396.236,
+        "Ixz": -0.004
+      },
+      "custom_params": {}
+    },
+    {
+      "name": "蓋",
+      "parent": "RootComponent",
+      "part_type": "structure",
+      "material": "鋼",
+      "is_visible": true,
+      "mass_g": 141.635,
+      "mass_g_override": null,
+      "center_of_mass_mm": {
+        "x": -0.0,
+        "y": 174.55,
+        "z": 2.196
+      },
+      "size_mm": {
+        "x": 20.0,
+        "y": 180.0,
+        "z": 20.0
+      },
+      "bbox_min_mm": {
+        "x": -10.0,
+        "y": 70.0,
+        "z": -10.0
+      },
+      "bbox_max_mm": {
+        "x": 10.0,
+        "y": 250.0,
+        "z": 10.0
+      },
+      "volume_cm3": 18.0427,
+      "area_cm2": 98.2386,
+      "moments_of_inertia_g_cm2": {
+        "Ixx": 45775.065,
+        "Iyy": 70.944,
+        "Izz": 45775.214,
+        "Ixy": 0.017,
+        "Iyz": -405.198,
+        "Ixz": 0.002
+      },
+      "custom_params": {}
+    },
+    {
+      "name": "Motor_1/2A6-2",
+      "parent": "RootComponent",
+      "part_type": "motor",
+      "material": "鋼",
+      "is_visible": true,
+      "mass_g": 139.831,
+      "mass_g_override": null,
+      "center_of_mass_mm": {
+        "x": 0.0,
+        "y": 35.0,
+        "z": 0.0
+      },
+      "size_mm": {
+        "x": 18.0,
+        "y": 70.0,
+        "z": 18.0
+      },
+      "bbox_min_mm": {
+        "x": -9.0,
+        "y": 0.0,
+        "z": -9.0
+      },
+      "bbox_max_mm": {
+        "x": 9.0,
+        "y": 70.0,
+        "z": 9.0
+      },
+      "volume_cm3": 17.8128,
+      "area_cm2": 44.6734,
+      "moments_of_inertia_g_cm2": {
+        "Ixx": 2312.218,
+        "Iyy": 56.631,
+        "Izz": 2312.218,
+        "Ixy": 0.0,
+        "Iyz": -0.0,
+        "Ixz": 0.0
+      },
+      "custom_params": {
+        "motor_id": "A6-2"
+      }
+    },
+    {
+      "name": "ボディ6",
+      "parent": "RootComponent",
+      "part_type": "structure",
+      "material": "鋼",
+      "is_visible": true,
+      "mass_g": 0.116,
+      "mass_g_override": null,
+      "center_of_mass_mm": {
+        "x": 0.225,
+        "y": 36.625,
+        "z": 23.875
+      },
+      "size_mm": {
+        "x": 0.5,
+        "y": 69.941,
+        "z": 29.212
+      },
+      "bbox_min_mm": {
+        "x": -0.025,
+        "y": 1.655,
+        "z": 9.269
+      },
+      "bbox_max_mm": {
+        "x": 0.475,
+        "y": 71.595,
+        "z": 38.481
+      },
+      "volume_cm3": 0.0148,
+      "area_cm2": 1.189,
+      "moments_of_inertia_g_cm2": {
+        "Ixx": 2.774,
+        "Iyy": 0.743,
+        "Izz": 2.031,
+        "Ixy": -0.01,
+        "Iyz": -0.822,
+        "Ixz": -0.006
+      },
+      "custom_params": {}
+    }
+  ]
+}

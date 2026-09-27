@@ -1,0 +1,191 @@
+{
+  "design_name": "つくば＿ロケット v6",
+  "export_time": "2026-09-27T01:30:01.607945",
+  "stl_file": "つくば＿ロケット v6.stl",
+  "units": {
+    "length": "mm",
+    "mass": "g",
+    "volume": "cm3",
+    "area": "cm2",
+    "moments_of_inertia": "g*cm2"
+  },
+  "assembly_summary": {
+    "total_mass_g": 390.174,
+    "total_volume_cm3": 49.7037,
+    "total_area_cm2": 373.5181,
+    "center_of_mass_mm": {
+      "x": 0.0,
+      "y": 58.651,
+      "z": 0.155
+    },
+    "moments_of_inertia_g_cm2": {
+      "Ixx": 20167.789,
+      "Iyy": 456.188,
+      "Izz": 20149.952
+    }
+  },
+  "bodies": [
+    {
+      "name": "Motor_1/2A6-2",
+      "parent": "RootComponent",
+      "part_type": "motor",
+      "material": "鋼",
+      "is_visible": true,
+      "mass_g": 139.831,
+      "mass_g_override": null,
+      "center_of_mass_mm": {
+        "x": 0.0,
+        "y": 35.0,
+        "z": -0.0
+      },
+      "size_mm": {
+        "x": 18.0,
+        "y": 70.0,
+        "z": 18.0
+      },
+      "bbox_min_mm": {
+        "x": -9.0,
+        "y": 0.0,
+        "z": -9.0
+      },
+      "bbox_max_mm": {
+        "x": 9.0,
+        "y": 70.0,
+        "z": 9.0
+      },
+      "volume_cm3": 17.8128,
+      "area_cm2": 44.6734,
+      "moments_of_inertia_g_cm2": {
+        "Ixx": 2312.217,
+        "Iyy": 56.631,
+        "Izz": 2312.217,
+        "Ixy": 0.0,
+        "Iyz": 0.0,
+        "Ixz": 0.0
+      },
+      "custom_params": {
+        "motor_id": "A6-2"
+      }
+    },
+    {
+      "name": "ボディ3",
+      "parent": "RootComponent",
+      "part_type": "structure",
+      "material": "鋼",
+      "is_visible": true,
+      "mass_g": 32.955,
+      "mass_g_override": null,
+      "center_of_mass_mm": {
+        "x": -0.0,
+        "y": 110.421,
+        "z": 4.751
+      },
+      "size_mm": {
+        "x": 22.0,
+        "y": 101.124,
+        "z": 21.989
+      },
+      "bbox_min_mm": {
+        "x": -11.0,
+        "y": 69.895,
+        "z": -11.0
+      },
+      "bbox_max_mm": {
+        "x": 11.0,
+        "y": 171.019,
+        "z": 10.989
+      },
+      "volume_cm3": 4.1981,
+      "area_cm2": 48.2936,
+      "moments_of_inertia_g_cm2": {
+        "Ixx": 4256.793,
+        "Iyy": 19.812,
+        "Izz": 4256.92,
+        "Ixy": 0.02,
+        "Iyz": -162.879,
+        "Ixz": 0.001
+      },
+      "custom_params": {}
+    },
+    {
+      "name": "ボディ11",
+      "parent": "RootComponent",
+      "part_type": "structure",
+      "material": "鋼",
+      "is_visible": true,
+      "mass_g": 150.678,
+      "mass_g_override": null,
+      "center_of_mass_mm": {
+        "x": 0.0,
+        "y": 51.203,
+        "z": -0.638
+      },
+      "size_mm": {
+        "x": 115.72,
+        "y": 179.012,
+        "z": 103.622
+      },
+      "bbox_min_mm": {
+        "x": -57.985,
+        "y": 0.0,
+        "z": -33.622
+      },
+      "bbox_max_mm": {
+        "x": 57.735,
+        "y": 179.012,
+        "z": 70.0
+      },
+      "volume_cm3": 19.1946,
+      "area_cm2": 248.7254,
+      "moments_of_inertia_g_cm2": {
+        "Ixx": 6680.011,
+        "Iyy": 366.109,
+        "Izz": 6662.046,
+        "Ixy": -0.218,
+        "Iyz": 144.973,
+        "Ixz": 0.022
+      },
+      "custom_params": {}
+    },
+    {
+      "name": "ストリーマ",
+      "parent": "RootComponent",
+      "part_type": "structure",
+      "material": "鋼",
+      "is_visible": true,
+      "mass_g": 66.711,
+      "mass_g_override": null,
+      "center_of_mass_mm": {
+        "x": -0.0,
+        "y": 99.472,
+        "z": -0.0
+      },
+      "size_mm": {
+        "x": 15.992,
+        "y": 100.933,
+        "z": 15.992
+      },
+      "bbox_min_mm": {
+        "x": -7.996,
+        "y": 70.0,
+        "z": -7.996
+      },
+      "bbox_max_mm": {
+        "x": 7.996,
+        "y": 170.933,
+        "z": 7.996
+      },
+      "volume_cm3": 8.4982,
+      "area_cm2": 31.8257,
+      "moments_of_inertia_g_cm2": {
+        "Ixx": 6918.768,
+        "Iyy": 13.637,
+        "Izz": 6918.768,
+        "Ixy": 0.0,
+        "Iyz": 0.0,
+        "Ixz": 0.0
+      },
+      "custom_params": {}
+    }
+  ]
+}
