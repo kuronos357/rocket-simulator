@@ -143,8 +143,10 @@ def create_deck():
     set_bg(s3)
     add_header(s3, "多目的最適化：パレートフロンティア（散布図）", "02. PARETO OPTIMAL FRONTIER")
 
-    # Embed Clean Scatter Plot
-    img_path = "output/pareto_scatter_presentation_clean.png"
+    # Embed Refined Clean Scatter Plot (No Clutter)
+    img_path = "output/pareto_scatter_refined_minimal.png"
+    if not os.path.exists(img_path):
+        img_path = "output/pareto_scatter_presentation_clean.png"
     if os.path.exists(img_path):
         s3.shapes.add_picture(img_path, Inches(0.8), Inches(1.8), width=Inches(8.5))
 
@@ -414,11 +416,21 @@ def create_deck():
         bp.font.size = Pt(12)
         bp.font.color.rgb = C_SUBTEXT
 
-    out_pptx = "output/モデルロケット多目的最適化_発表スライド.pptx"
-    out_pptx_en = "output/rocket_mdo_presentation.pptx"
-    prs.save(out_pptx)
-    prs.save(out_pptx_en)
-    print(f"Presentation successfully saved to: {out_pptx} and {out_pptx_en}")
+    paths = [
+        "output/rocket_mdo_presentation.pptx",
+        "output/モデルロケット多目的最適化_発表スライド.pptx"
+    ]
+    saved = []
+    for p in paths:
+        try:
+            prs.save(p)
+            saved.append(p)
+            print(f"Presentation successfully saved to: {p}")
+        except PermissionError:
+            alt = p.replace(".pptx", "_v2.pptx")
+            prs.save(alt)
+            saved.append(alt)
+            print(f"File locked, saved alternative to: {alt}")
 
 if __name__ == "__main__":
     create_deck()

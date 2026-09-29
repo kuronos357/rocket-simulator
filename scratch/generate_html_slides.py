@@ -9,7 +9,10 @@ def generate_html_deck():
                 return "data:image/png;base64," + base64.b64encode(f.read()).decode("utf-8")
         return ""
 
-    img_scatter = to_b64("output/pareto_scatter_presentation_clean.png")
+    scatter_path = "output/pareto_scatter_refined_minimal.png"
+    if not os.path.exists(scatter_path):
+        scatter_path = "output/pareto_scatter_presentation_clean.png"
+    img_scatter = to_b64(scatter_path)
     img_c2 = to_b64("output/rocket_m3type2_preview.png")
     img_c1 = to_b64("output/rocket_m3type1_preview.png")
 
