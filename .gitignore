@@ -18,3 +18,8 @@ output/*
 # Exported large binaries
 export/*.step
 export/*.stl
+export/*.3mf
+
+archive/
+.vscode/
+fusion_addon/.vscode/
