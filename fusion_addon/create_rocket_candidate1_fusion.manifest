@@ -1,0 +1,10 @@
+{
+	"autodeskProduct":	"Fusion",
+	"type":	"script",
+	"author":	"Antigravity",
+	"description":	{
+		"":	"Rocket Simulator Candidate 1 - Asymmetric 4-Fin High Altitude Model"
+	},
+	"supportedOS":	"windows|mac",
+	"editEnabled":	true
+}
