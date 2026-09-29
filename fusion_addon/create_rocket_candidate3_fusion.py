@@ -58,13 +58,21 @@ def run(context):
             t = i / float(n_pts) # 0 to 1
             z_cm = 13.0 + 12.0 * t # 13.0 to 25.0 cm
             dist_from_tip_cm = 25.0 - z_cm # 12.0 to 0.0 cm
-            # y = R * (x / L)^0.75
-            r_cm = 1.2 * ((dist_from_tip_cm / 12.0) ** 0.75) if dist_from_tip_cm > 0.0 else 0.0
+            
+            # Linear blend in the last 0.5mm (0.05cm) to avoid ASM_PATH_TANGENT singularity at the tip
+            if dist_from_tip_cm > 0.05:
+                r_cm = 1.2 * ((dist_from_tip_cm / 12.0) ** 0.75)
+            elif dist_from_tip_cm > 0.0:
+                r_at_blend = 1.2 * ((0.05 / 12.0) ** 0.75)
+                r_cm = r_at_blend * (dist_from_tip_cm / 0.05)
+            else:
+                r_cm = 0.0
+                
             next_pt = adsk.core.Point3D.create(r_cm, 0.0, z_cm)
             lines_nose.addByTwoPoints(prev_pt, next_pt)
             prev_pt = next_pt
 
-        # At tip: prev_pt is (0.0, 0.0, 25.0)
+        # At tip: prev_pt is exactly (0.0, 0.0, 25.0)
         # 2) Center line along Z-axis from tip (0, 0, 25) to base center (0, 0, 13)
         pt_center_base = adsk.core.Point3D.create(0.0, 0.0, 13.0)
         l_center = lines_nose.addByTwoPoints(prev_pt, pt_center_base)
@@ -77,7 +85,8 @@ def run(context):
             return
 
         prof_nose = sketch_nose.profiles.item(0)
-        revInput = revolves.createInput(prof_nose, zAxis, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+        # Use l_center as axis to ensure exact coincidence with the profile edge
+        revInput = revolves.createInput(prof_nose, l_center, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
         revInput.setAngleExtent(False, adsk.core.ValueInput.createByReal(2.0 * math.pi))
         nose_feature = revolves.add(revInput)
         nose_feature.bodies.item(0).name = "NoseCone"
