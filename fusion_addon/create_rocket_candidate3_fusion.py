@@ -37,29 +37,29 @@ def run(context):
         # テール外周 (1.2,0,0) -> 胴体肩 (1.2,0,13.0)
         lines_body.addByTwoPoints(m2s_body(1.2, 0.0, 0.0), m2s_body(1.2, 0.0, 13.0))
 
-        # ノーズコーン曲線 (Z=13.0cm から Z=25.0cm まで)
-        n_pts = 30
-        prev_pt = m2s_body(1.2, 0.0, 13.0)
-        for i in range(1, n_pts + 1):
+        # ノーズコーン曲線 (Z=13.0cm から Z=25.0cm まで) を美しいスプライン曲線で生成
+        spline_points = adsk.core.ObjectCollection.create()
+        # 始点: 胴体肩 (1.2, 0, 13.0)
+        pt_shoulder = m2s_body(1.2, 0.0, 13.0)
+        spline_points.add(pt_shoulder)
+
+        n_pts = 24
+        for i in range(1, n_pts):
             t = i / float(n_pts)
             z_cm = 13.0 + 12.0 * t
             dist_from_tip = 25.0 - z_cm
-            
-            # 先端付近は微小ブレンドで特異点(垂直接線)を回避
-            if dist_from_tip > 0.05:
-                r_cm = 1.2 * ((dist_from_tip / 12.0) ** 0.75)
-            elif dist_from_tip > 0.0:
-                r_blend = 1.2 * ((0.05 / 12.0) ** 0.75)
-                r_cm = r_blend * (dist_from_tip / 0.05)
-            else:
-                r_cm = 0.0
-                
-            next_pt = m2s_body(r_cm, 0.0, z_cm)
-            lines_body.addByTwoPoints(prev_pt, next_pt)
-            prev_pt = next_pt
+            r_cm = 1.2 * ((dist_from_tip / 12.0) ** 0.75)
+            spline_points.add(m2s_body(r_cm, 0.0, z_cm))
+
+        # 終点: ノーズ先端 (0.0, 0, 25.0)
+        pt_tip = m2s_body(0.0, 0.0, 25.0)
+        spline_points.add(pt_tip)
+
+        sketch_body.sketchCurves.sketchFittedSplines.add(spline_points)
 
         # 中心軸 (ノーズ先端 (0,0,25.0) -> テール中心 (0,0,0.0)) でプロファイルを閉じる
-        axis_line = lines_body.addByTwoPoints(prev_pt, m2s_body(0.0, 0.0, 0.0))
+        pt_tail_center = m2s_body(0.0, 0.0, 0.0)
+        axis_line = lines_body.addByTwoPoints(pt_tip, pt_tail_center)
 
         if sketch_body.profiles.count == 0:
             ui.messageBox('ロケット本体スケッチのプロファイル生成に失敗しました。')
