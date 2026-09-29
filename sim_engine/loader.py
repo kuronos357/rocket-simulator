@@ -61,8 +61,12 @@ class RocketModel:
             # プロジェクト直下の .gcode.3mf や .3mf があれば自動探索
             import zipfile
             import glob
-            proj_dir = os.path.dirname(self.base_dir)
-            mf_candidates = glob.glob(os.path.join(proj_dir, "*.gcode.3mf")) + glob.glob(os.path.join(self.base_dir, "*.gcode.3mf"))
+            mf_candidates = (
+                glob.glob(os.path.join(proj_dir, "*.gcode.3mf")) +
+                glob.glob(os.path.join(proj_dir, "input", "*.gcode.3mf")) +
+                glob.glob(os.path.join(proj_dir, "input", "*.3mf")) +
+                glob.glob(os.path.join(self.base_dir, "*.gcode.3mf"))
+            )
             if mf_candidates:
                 # 最新の3MFから推定重量を取得 (ユーザー指定11.07g等)
                 pass # ユーザー明示指定がない場合はデフォルト計算を優先

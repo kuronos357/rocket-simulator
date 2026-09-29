@@ -1,4 +1,20 @@
+# Python virtual environment
 .venv/
 __pycache__/
 *.pyc
+
+# System logs & runtime
 .system_generated/
+*.log
+
+# CAD models & Mesh input files (Large binaries)
+input/*
+!input/.gitkeep
+
+# Simulation & Optimization outputs (Plots, figures, generated specs)
+output/*
+!output/.gitkeep
+
+# Exported large binaries
+export/*.step
+export/*.stl

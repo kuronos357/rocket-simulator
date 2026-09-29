@@ -1,0 +1,62 @@
+{
+  "4fin_asym_55x31": {
+    "span": 55.0,
+    "cr": 31.0,
+    "theta": 0.0,
+    "v_scale": 0.9,
+    "is_4fin": true,
+    "fin_mass_g": 1.5306808000000003,
+    "total_mass_g": 30.53919912401603,
+    "margin_pitch": 0.9334042114632339,
+    "margin_yaw": 0.7912269967532876,
+    "margin_eff": 0.7912269967532876,
+    "apogee_m": 145.5635138631934,
+    "total_time_s": 30.425738204815865,
+    "v_descent": 5.777715006201038
+  },
+  "4fin_asym_59x33": {
+    "span": 59.0,
+    "cr": 33.0,
+    "theta": 0.0,
+    "v_scale": 0.85,
+    "is_4fin": true,
+    "fin_mass_g": 1.6634389200000006,
+    "total_mass_g": 30.67195724401603,
+    "margin_pitch": 1.0009086702473262,
+    "margin_yaw": 0.799972372569342,
+    "margin_eff": 0.799972372569342,
+    "apogee_m": 144.12783901431703,
+    "total_time_s": 30.368173321042345,
+    "v_descent": 5.72791571947278
+  },
+  "3fin_asym_76x44": {
+    "span": 76.0,
+    "cr": 44.0,
+    "theta": 35.0,
+    "v_scale": 0.7,
+    "is_4fin": false,
+    "fin_mass_g": 2.06498688,
+    "total_mass_g": 31.07350520401603,
+    "margin_pitch": 0.8662780923114722,
+    "margin_yaw": 0.8585020261495835,
+    "margin_eff": 0.8585020261495835,
+    "apogee_m": 140.57741332463078,
+    "total_time_s": 30.26406577562424,
+    "v_descent": 5.596414024627523
+  },
+  "122_high_stability": {
+    "span": 59.0,
+    "cr": 33.0,
+    "theta": 0.0,
+    "v_scale": 1.0,
+    "is_4fin": true,
+    "fin_mass_g": 1.9314240000000005,
+    "total_mass_g": 31.93994232401603,
+    "margin_pitch": 1.2197386455780972,
+    "margin_yaw": 1.2197386455780972,
+    "margin_eff": 1.2197386455780972,
+    "apogee_m": 136.1668554788865,
+    "total_time_s": 28.44162428061096,
+    "v_descent": 5.830561894080257
+  }
+}

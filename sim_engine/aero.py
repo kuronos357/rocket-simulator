@@ -167,18 +167,22 @@ class AeroEngine:
         r_centers = np.sqrt(centers[:, 0]**2 + centers[:, 1]**2)
         
         # 1. ノーズコーン判定: 前方部で法線が前方(+Z)を向いている面
-        is_nose = (centers[:, 2] >= (self.z_max - 65.0)) & (normals[:, 2] > 0.05)
+        total_len_mm = self.z_max - self.z_min
+        nose_region_len = max(50.0, 0.35 * total_len_mm)
+        fin_region_len = max(60.0, 0.45 * total_len_mm)
+        
+        is_nose = (centers[:, 2] >= (self.z_max - nose_region_len)) & (normals[:, 2] > 0.05)
         cna_nose = 2.0 # Slender-body theory
         if np.sum(is_nose) > 0 and np.sum(areas[is_nose]) > 0:
             cp_nose = float(np.sum(centers[is_nose, 2] * areas[is_nose]) / np.sum(areas[is_nose]))
         else:
-            cp_nose = self.z_max - 0.466 * 60.0
+            cp_nose = self.z_max - 0.466 * min(60.0, nose_region_len)
             
         # 2. フィン判定 (テール付近で胴体外径より突出している面)
         # 水平主翼 (X軸方向へ広がり、法線が Y 方向を向く)
-        is_h_fin = (r_centers > (r_body + 0.2)) & (centers[:, 2] <= (self.z_min + 75.0)) & (abs(normals[:, 1]) > 0.5)
+        is_h_fin = (r_centers > (r_body + 0.2)) & (centers[:, 2] <= (self.z_min + fin_region_len)) & (abs(normals[:, 1]) > 0.5)
         # 垂直尾翼 (Y軸方向へ広がり、法線が X 方向を向く)
-        is_v_fin = (r_centers > (r_body + 0.2)) & (centers[:, 2] <= (self.z_min + 75.0)) & (abs(normals[:, 0]) > 0.5)
+        is_v_fin = (r_centers > (r_body + 0.2)) & (centers[:, 2] <= (self.z_min + fin_region_len)) & (abs(normals[:, 0]) > 0.5)
         
         # 水平主翼 (Pitch 軸に寄与)
         if np.sum(is_h_fin) > 0 and np.sum(areas[is_h_fin]) > 0:

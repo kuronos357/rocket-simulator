@@ -1,0 +1,232 @@
+{
+  "design_name": "つくば＿ロケット v17",
+  "export_time": "2026-09-28T05:00:41.427120",
+  "stl_file": "つくば＿ロケット v17.stl",
+  "step_file": "つくば＿ロケット v17.step",
+  "units": {
+    "length": "mm",
+    "mass": "g",
+    "volume": "cm3",
+    "area": "cm2",
+    "moments_of_inertia": "g*cm2"
+  },
+  "assembly_summary": {
+    "total_mass_g": 338.739,
+    "total_volume_cm3": 43.1515,
+    "total_area_cm2": 327.861,
+    "center_of_mass_mm": {
+      "x": 0.0,
+      "y": 64.955,
+      "z": 0.329
+    },
+    "moments_of_inertia_g_cm2": {
+      "Ixx": 21143.495,
+      "Iyy": 242.735,
+      "Izz": 21201.384
+    }
+  },
+  "bodies": [
+    {
+      "name": "Motor_1/2A6-2",
+      "parent": "RootComponent",
+      "part_type": "motor",
+      "material": "鋼",
+      "is_visible": true,
+      "mass_g": 139.831,
+      "mass_g_override": null,
+      "center_of_mass_mm": {
+        "x": 0.0,
+        "y": 35.0,
+        "z": -0.0
+      },
+      "size_mm": {
+        "x": 18.0,
+        "y": 70.0,
+        "z": 18.0
+      },
+      "bbox_min_mm": {
+        "x": -9.0,
+        "y": 0.0,
+        "z": -9.0
+      },
+      "bbox_max_mm": {
+        "x": 9.0,
+        "y": 70.0,
+        "z": 9.0
+      },
+      "volume_cm3": 17.8128,
+      "area_cm2": 44.6734,
+      "moments_of_inertia_g_cm2": {
+        "Ixx": 2312.217,
+        "Iyy": 56.631,
+        "Izz": 2312.217,
+        "Ixy": 0.0,
+        "Iyz": 0.0,
+        "Ixz": 0.0
+      },
+      "custom_params": {
+        "motor_id": "A6-2"
+      }
+    },
+    {
+      "name": "ストリーマ",
+      "parent": "RootComponent",
+      "part_type": "structure",
+      "material": "鋼",
+      "is_visible": false,
+      "mass_g": 66.711,
+      "mass_g_override": null,
+      "center_of_mass_mm": {
+        "x": -0.0,
+        "y": 102.472,
+        "z": -0.0
+      },
+      "size_mm": {
+        "x": 15.992,
+        "y": 100.933,
+        "z": 15.992
+      },
+      "bbox_min_mm": {
+        "x": -7.996,
+        "y": 73.0,
+        "z": -7.996
+      },
+      "bbox_max_mm": {
+        "x": 7.996,
+        "y": 173.933,
+        "z": 7.996
+      },
+      "volume_cm3": 8.4982,
+      "area_cm2": 31.8257,
+      "moments_of_inertia_g_cm2": {
+        "Ixx": 7322.921,
+        "Iyy": 13.637,
+        "Izz": 7322.921,
+        "Ixy": 0.0,
+        "Iyz": 0.0,
+        "Ixz": 0.0
+      },
+      "custom_params": {}
+    },
+    {
+      "name": "胴体",
+      "parent": "RootComponent",
+      "part_type": "structure",
+      "material": "鋼",
+      "is_visible": true,
+      "mass_g": 94.047,
+      "mass_g_override": null,
+      "center_of_mass_mm": {
+        "x": 0.0,
+        "y": 60.983,
+        "z": -0.607
+      },
+      "size_mm": {
+        "x": 119.737,
+        "y": 175.0,
+        "z": 66.56
+      },
+      "bbox_min_mm": {
+        "x": -59.869,
+        "y": 0.0,
+        "z": -13.5
+      },
+      "bbox_max_mm": {
+        "x": 59.869,
+        "y": 175.0,
+        "z": 53.06
+      },
+      "volume_cm3": 11.9805,
+      "area_cm2": 197.0458,
+      "moments_of_inertia_g_cm2": {
+        "Ixx": 5698.311,
+        "Iyy": 150.986,
+        "Izz": 5757.169,
+        "Ixy": -0.024,
+        "Iyz": 163.408,
+        "Ixz": -0.001
+      },
+      "custom_params": {}
+    },
+    {
+      "name": "蓋",
+      "parent": "RootComponent",
+      "part_type": "structure",
+      "material": "鋼",
+      "is_visible": true,
+      "mass_g": 38.029,
+      "mass_g_override": null,
+      "center_of_mass_mm": {
+        "x": -0.001,
+        "y": 119.196,
+        "z": 4.338
+      },
+      "size_mm": {
+        "x": 20.0,
+        "y": 120.0,
+        "z": 13.758
+      },
+      "bbox_min_mm": {
+        "x": -10.0,
+        "y": 70.0,
+        "z": -3.758
+      },
+      "bbox_max_mm": {
+        "x": 10.0,
+        "y": 190.0,
+        "z": 10.0
+      },
+      "volume_cm3": 4.8444,
+      "area_cm2": 53.0653,
+      "moments_of_inertia_g_cm2": {
+        "Ixx": 5806.74,
+        "Iyy": 20.411,
+        "Izz": 5806.842,
+        "Ixy": 0.033,
+        "Iyz": -178.44,
+        "Ixz": 0.0
+      },
+      "custom_params": {}
+    },
+    {
+      "name": "ボディ62",
+      "parent": "RootComponent",
+      "part_type": "structure",
+      "material": "鋼",
+      "is_visible": true,
+      "mass_g": 0.122,
+      "mass_g_override": null,
+      "center_of_mass_mm": {
+        "x": 0.2,
+        "y": 37.5,
+        "z": 27.746
+      },
+      "size_mm": {
+        "x": 0.5,
+        "y": 71.224,
+        "z": 35.938
+      },
+      "bbox_min_mm": {
+        "x": -0.05,
+        "y": 1.888,
+        "z": 9.776
+      },
+      "bbox_max_mm": {
+        "x": 0.45,
+        "y": 73.112,
+        "z": 45.715
+      },
+      "volume_cm3": 0.0156,
+      "area_cm2": 1.2508,
+      "moments_of_inertia_g_cm2": {
+        "Ixx": 3.305,
+        "Iyy": 1.07,
+        "Izz": 2.235,
+        "Ixy": -0.009,
+        "Iyz": -1.016,
+        "Ixz": -0.007
+      },
+      "custom_params": {}
+    }
+  ]
+}
