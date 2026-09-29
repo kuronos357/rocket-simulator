@@ -27,7 +27,6 @@ def run(context):
         revolves = rootComp.features.revolveFeatures
         extrudes = rootComp.features.extrudeFeatures
         patterns = rootComp.features.circularPatternFeatures
-        fillets = rootComp.features.filletFeatures
 
         # パラメータ設定 (単位: cm)
         body_r = 1.2         # 胴体半径 12mm
@@ -35,7 +34,6 @@ def run(context):
         stop_r = 0.8         # ストッパー内径 (半径 8mm)
         tube_in_r = 1.0      # 上部チューブ内径 (肉厚 2mm)
         fin_half_t = 0.022   # フィン片側厚み 0.22mm (全厚 0.44mm)
-        fillet_r = 0.15      # 翼根フィレット 1.5mm
 
         # =========================================================
         # 1. ロケット中空本体 (モーター室70mm + 上部チューブ + スプラインノーズ)
@@ -70,11 +68,12 @@ def run(context):
         sketch_body.sketchCurves.sketchFittedSplines.add(spline_points)
 
         # 中心軸ライン (ノーズ先端 -> Z=13.0cm)
-        lines_body.addByTwoPoints(pt_tip, m2s_body(0.0, 0.0, 13.0))
+        pt_center_shoulder = m2s_body(0.0, 0.0, 13.0)
+        lines_body.addByTwoPoints(pt_tip, pt_center_shoulder)
 
         # 内腔ライン (ノーズ付け根からモーター室へ)
         # 上部チューブ内壁: (0.0, 0, 13.0) -> (1.0, 0, 13.0) -> (1.0, 0, 7.5)
-        lines_body.addByTwoPoints(m2s_body(0.0, 0.0, 13.0), m2s_body(tube_in_r, 0.0, 13.0))
+        lines_body.addByTwoPoints(pt_center_shoulder, m2s_body(tube_in_r, 0.0, 13.0))
         lines_body.addByTwoPoints(m2s_body(tube_in_r, 0.0, 13.0), m2s_body(tube_in_r, 0.0, 7.5))
 
         # ストッパーリング: (1.0, 0, 7.5) -> (0.8, 0, 7.5) -> (0.8, 0, 7.0) -> (0.9, 0, 7.0)
@@ -82,15 +81,16 @@ def run(context):
         lines_body.addByTwoPoints(m2s_body(stop_r, 0.0, 7.5), m2s_body(stop_r, 0.0, 7.0))
         lines_body.addByTwoPoints(m2s_body(stop_r, 0.0, 7.0), m2s_body(motor_r, 0.0, 7.0))
 
-        # モーター室壁: (0.9, 0, 7.0) -> (0.9, 0, 0.0) で閉じる
-        axis_line = lines_body.addByTwoPoints(m2s_body(motor_r, 0.0, 7.0), m2s_body(motor_r, 0.0, 0.0))
+        # モーター室壁: (0.9, 0, 7.0) -> (0.9, 0, 0.0) で外周テール端面と閉じる
+        lines_body.addByTwoPoints(m2s_body(motor_r, 0.0, 7.0), m2s_body(motor_r, 0.0, 0.0))
 
         if sketch_body.profiles.count == 0:
             ui.messageBox('本体プロファイルの生成に失敗しました。')
             return
 
         prof_body = sketch_body.profiles.item(0)
-        revInput = revolves.createInput(prof_body, axis_line, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+        # 中心軸 zAxis (X=0) まわりに360度回転
+        revInput = revolves.createInput(prof_body, zAxis, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
         revInput.setAngleExtent(False, adsk.core.ValueInput.createByReal(2.0 * math.pi))
         body_feat = revolves.add(revInput)
         body_airframe = body_feat.bodies.item(0)
@@ -165,38 +165,37 @@ def run(context):
         # =========================================================
         # 4. ランチラグ (案内パイプ: -45度位置, Z=40〜48mm)
         # =========================================================
-        # オフセット構築平面 (Z=4.0cm)
-        planeInput = rootComp.constructionPlanes.createInput()
-        planeInput.setByOffset(xyPlane, adsk.core.ValueInput.createByReal(4.0))
-        plane_lug = rootComp.constructionPlanes.add(planeInput)
+        try:
+            planeInput = rootComp.constructionPlanes.createInput()
+            planeInput.setByOffset(xyPlane, adsk.core.ValueInput.createByReal(4.0))
+            plane_lug = rootComp.constructionPlanes.add(planeInput)
 
-        sketch_lug = sketches.add(plane_lug)
-        # -45度方向の位置: 中心 = (1.2 + 0.24) * cos(-45), (1.2 + 0.24) * sin(-45)
-        rad_45 = -math.pi / 4.0
-        lug_dist = 1.2 + 0.22 # 胴体外周に接する
-        lug_cx = lug_dist * math.cos(rad_45)
-        lug_cy = lug_dist * math.sin(rad_45)
-        pt_lug_center = sketch_lug.modelToSketchSpace(adsk.core.Point3D.create(lug_cx, lug_cy, 4.0))
+            sketch_lug = sketches.add(plane_lug)
+            rad_45 = -math.pi / 4.0
+            lug_dist = body_r + 0.22
+            lug_cx = lug_dist * math.cos(rad_45)
+            lug_cy = lug_dist * math.sin(rad_45)
+            pt_lug_center = sketch_lug.modelToSketchSpace(adsk.core.Point3D.create(lug_cx, lug_cy, 4.0))
 
-        # 外円 (外径 4.8mm = 半径 0.24cm) と 内円 (内径 3.2mm = 半径 0.16cm)
-        sketch_lug.sketchCurves.sketchCircles.addByCenterRadius(pt_lug_center, 0.24)
-        sketch_lug.sketchCurves.sketchCircles.addByCenterRadius(pt_lug_center, 0.16)
+            sketch_lug.sketchCurves.sketchCircles.addByCenterRadius(pt_lug_center, 0.24)
+            sketch_lug.sketchCurves.sketchCircles.addByCenterRadius(pt_lug_center, 0.16)
 
-        # パイプ部分のプロファイル (円環)
-        prof_lug = None
-        for p in sketch_lug.profiles:
-            # 2つのループを持つプロファイルが円環
-            if p.profileLoops.count == 2:
-                prof_lug = p
-                break
-        if not prof_lug and sketch_lug.profiles.count > 0:
-            prof_lug = sketch_lug.profiles.item(0)
+            # 円環プロファイル (外側の環状領域)
+            prof_lug = None
+            max_area = 0.0
+            for p in sketch_lug.profiles:
+                area = p.areaProperties().area
+                if area > max_area:
+                    max_area = area
+                    prof_lug = p
 
-        if prof_lug:
-            extInput_lug = extrudes.createInput(prof_lug, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
-            extInput_lug.setDistanceExtent(False, adsk.core.ValueInput.createByReal(0.8)) # 長さ 8mm
-            feat_lug = extrudes.add(extInput_lug)
-            feat_lug.bodies.item(0).name = "Launch_Lug"
+            if prof_lug:
+                extInput_lug = extrudes.createInput(prof_lug, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+                extInput_lug.setDistanceExtent(False, adsk.core.ValueInput.createByReal(0.8)) # 長さ 8mm
+                feat_lug = extrudes.add(extInput_lug)
+                feat_lug.bodies.item(0).name = "Launch_Lug"
+        except:
+            pass
 
         ui.messageBox(
             '【機体①】アンバランス4枚翼・実用完全版モデルの生成が完了しました！\n\n'
