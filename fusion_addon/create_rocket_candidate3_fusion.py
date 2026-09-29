@@ -15,127 +15,108 @@ def run(context):
 
         rootComp = design.rootComponent
         sketches = rootComp.sketches
-        xyPlane = rootComp.xYConstructionPlane
         xzPlane = rootComp.xZConstructionPlane
         zAxis = rootComp.zConstructionAxis
 
-        extrudes = rootComp.features.extrudeFeatures
         revolves = rootComp.features.revolveFeatures
+        extrudes = rootComp.features.extrudeFeatures
         patterns = rootComp.features.circularPatternFeatures
 
-        # ---------------------------------------------------------
-        # 1. Body Tube (Cylinder: D=24mm, L=130mm, from Z=0 to Z=130mm)
-        # ---------------------------------------------------------
-        sketch_body = sketches.add(xyPlane)
-        circles = sketch_body.sketchCurves.sketchCircles
-        circle_out = circles.addByCenterRadius(adsk.core.Point3D.create(0, 0, 0), 1.2) # cm (R=12mm)
-        
-        if sketch_body.profiles.count == 0:
-            ui.messageBox('胴体スケッチのプロファイル生成に失敗しました。')
-            return
-            
-        prof_body = sketch_body.profiles.item(0)
-        extInput_body = extrudes.createInput(prof_body, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
-        dist_body = adsk.core.ValueInput.createByReal(13.0) # 13.0 cm = 130mm
-        extInput_body.setDistanceExtent(False, dist_body)
-        body_feature = extrudes.add(extInput_body)
-        body_feature.bodies.item(0).name = "Fuselage_Tube"
+        # =========================================================
+        # 1. ロケット本体 (胴体 130mm + ノーズ 120mm 一体回転成形)
+        # =========================================================
+        sketch_body = sketches.add(xzPlane)
+        lines_body = sketch_body.sketchCurves.sketchLines
 
-        # ---------------------------------------------------------
-        # 2. Nose Cone (Revolve: Power Series 0.75, L=120mm, R=12mm)
-        #    Located from Z=130mm to Z=250mm along Z-axis on xzPlane (Y=0)
-        # ---------------------------------------------------------
-        sketch_nose = sketches.add(xzPlane)
-        lines_nose = sketch_nose.sketchCurves.sketchLines
+        # ワールド座標系 (cm) をスケッチ平面のローカル座標に自動変換する安全ヘルパー
+        def m2s_body(x, y, z):
+            return sketch_body.modelToSketchSpace(adsk.core.Point3D.create(x, y, z))
 
-        # Use piecewise connected lines for 100% guaranteed watertight profile detection
+        # テール中心 (0,0,0) -> テール外周 (1.2,0,0)
+        lines_body.addByTwoPoints(m2s_body(0.0, 0.0, 0.0), m2s_body(1.2, 0.0, 0.0))
+        # テール外周 (1.2,0,0) -> 胴体肩 (1.2,0,13.0)
+        lines_body.addByTwoPoints(m2s_body(1.2, 0.0, 0.0), m2s_body(1.2, 0.0, 13.0))
+
+        # ノーズコーン曲線 (Z=13.0cm から Z=25.0cm まで)
         n_pts = 30
-        pt_base_outer = adsk.core.Point3D.create(1.2, 0.0, 13.0) # Base at (R=1.2cm, Z=13cm)
-        prev_pt = pt_base_outer
-
-        # 1) Curve profile from base (Z=13cm) to tip (Z=25cm)
+        prev_pt = m2s_body(1.2, 0.0, 13.0)
         for i in range(1, n_pts + 1):
-            t = i / float(n_pts) # 0 to 1
-            z_cm = 13.0 + 12.0 * t # 13.0 to 25.0 cm
-            dist_from_tip_cm = 25.0 - z_cm # 12.0 to 0.0 cm
+            t = i / float(n_pts)
+            z_cm = 13.0 + 12.0 * t
+            dist_from_tip = 25.0 - z_cm
             
-            # Linear blend in the last 0.5mm (0.05cm) to avoid ASM_PATH_TANGENT singularity at the tip
-            if dist_from_tip_cm > 0.05:
-                r_cm = 1.2 * ((dist_from_tip_cm / 12.0) ** 0.75)
-            elif dist_from_tip_cm > 0.0:
-                r_at_blend = 1.2 * ((0.05 / 12.0) ** 0.75)
-                r_cm = r_at_blend * (dist_from_tip_cm / 0.05)
+            # 先端付近は微小ブレンドで特異点(垂直接線)を回避
+            if dist_from_tip > 0.05:
+                r_cm = 1.2 * ((dist_from_tip / 12.0) ** 0.75)
+            elif dist_from_tip > 0.0:
+                r_blend = 1.2 * ((0.05 / 12.0) ** 0.75)
+                r_cm = r_blend * (dist_from_tip / 0.05)
             else:
                 r_cm = 0.0
                 
-            next_pt = adsk.core.Point3D.create(r_cm, 0.0, z_cm)
-            lines_nose.addByTwoPoints(prev_pt, next_pt)
+            next_pt = m2s_body(r_cm, 0.0, z_cm)
+            lines_body.addByTwoPoints(prev_pt, next_pt)
             prev_pt = next_pt
 
-        # At tip: prev_pt is exactly (0.0, 0.0, 25.0)
-        # 2) Center line along Z-axis from tip (0, 0, 25) to base center (0, 0, 13)
-        pt_center_base = adsk.core.Point3D.create(0.0, 0.0, 13.0)
-        l_center = lines_nose.addByTwoPoints(prev_pt, pt_center_base)
+        # 中心軸 (ノーズ先端 (0,0,25.0) -> テール中心 (0,0,0.0)) でプロファイルを閉じる
+        axis_line = lines_body.addByTwoPoints(prev_pt, m2s_body(0.0, 0.0, 0.0))
 
-        # 3) Horizontal base line closing back to start: (0, 0, 13) -> (1.2, 0, 13)
-        lines_nose.addByTwoPoints(pt_center_base, pt_base_outer)
-
-        if sketch_nose.profiles.count == 0:
-            ui.messageBox('ノーズコーンの閉じたプロファイルが検出できませんでした。')
+        if sketch_body.profiles.count == 0:
+            ui.messageBox('ロケット本体スケッチのプロファイル生成に失敗しました。')
             return
 
-        prof_nose = sketch_nose.profiles.item(0)
-        # Use l_center as axis to ensure exact coincidence with the profile edge
-        revInput = revolves.createInput(prof_nose, l_center, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+        prof_body = sketch_body.profiles.item(0)
+        revInput = revolves.createInput(prof_body, axis_line, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
         revInput.setAngleExtent(False, adsk.core.ValueInput.createByReal(2.0 * math.pi))
-        nose_feature = revolves.add(revInput)
-        nose_feature.bodies.item(0).name = "NoseCone"
+        body_feat = revolves.add(revInput)
+        body_feat.bodies.item(0).name = "Rocket_Airframe"
 
-        # ---------------------------------------------------------
-        # 3. Delta Fin (Span=59mm, Cr=33mm, Thick=0.8mm)
-        #    Attached at Z=0 to Z=33mm, extending in +X direction on xzPlane (Y=0)
-        # ---------------------------------------------------------
+        # =========================================================
+        # 2. デルタ翼 (スパン59mm, コード33mm, 厚み0.8mm)
+        # =========================================================
         sketch_fin = sketches.add(xzPlane)
         lines_fin = sketch_fin.sketchCurves.sketchLines
-        
-        # P1: Root Trailing Edge at (1.2cm, 0, 0.0cm)
-        # P2: Root Leading Edge at (1.2cm, 0, 3.3cm)
-        # P3: Tip at (1.2 + 5.9 = 7.1cm, 0, 0.0cm)
-        p1 = adsk.core.Point3D.create(1.2, 0.0, 0.0)
-        p2 = adsk.core.Point3D.create(1.2, 0.0, 3.3)
-        p3 = adsk.core.Point3D.create(7.1, 0.0, 0.0)
 
-        lines_fin.addByTwoPoints(p1, p2)
-        lines_fin.addByTwoPoints(p2, p3)
-        lines_fin.addByTwoPoints(p3, p1)
+        def m2s_fin(x, y, z):
+            return sketch_fin.modelToSketchSpace(adsk.core.Point3D.create(x, y, z))
+
+        # P1: テール側根元 (1.2cm, 0, 0.0cm)
+        # P2: 先端側根元 (1.2cm, 0, 3.3cm)
+        # P3: 翼端チップ (1.2 + 5.9 = 7.1cm, 0, 0.0cm)
+        fp1 = m2s_fin(1.2, 0.0, 0.0)
+        fp2 = m2s_fin(1.2, 0.0, 3.3)
+        fp3 = m2s_fin(7.1, 0.0, 0.0)
+
+        lines_fin.addByTwoPoints(fp1, fp2)
+        lines_fin.addByTwoPoints(fp2, fp3)
+        lines_fin.addByTwoPoints(fp3, fp1)
 
         if sketch_fin.profiles.count == 0:
-            ui.messageBox('フィンスケッチの閉じたプロファイルが検出できませんでした。')
+            ui.messageBox('フィンスケッチのプロファイル生成に失敗しました。')
             return
 
         prof_fin = sketch_fin.profiles.item(0)
         extInput_fin = extrudes.createInput(prof_fin, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
-        # Symmetric extrusion: total thickness 0.8mm = 0.08cm (half is 0.04cm)
-        dist_fin = adsk.core.ValueInput.createByReal(0.04)
-        extInput_fin.setSymmetricExtent(dist_fin, True)
-        fin_feature = extrudes.add(extInput_fin)
-        base_fin_body = fin_feature.bodies.item(0)
-        base_fin_body.name = "Fin_1"
+        # 対称押し出し: 厚み 0.8mm = 0.08cm (片側 0.04cm)
+        extInput_fin.setSymmetricExtent(adsk.core.ValueInput.createByReal(0.04), True)
+        fin_feat = extrudes.add(extInput_fin)
+        fin_body = fin_feat.bodies.item(0)
+        fin_body.name = "Fin_1"
 
-        # ---------------------------------------------------------
-        # 4. Circular Pattern for 4 Fins (90 deg symmetric around Z-axis)
-        # ---------------------------------------------------------
+        # =========================================================
+        # 3. 円形パターン (Z軸まわりに4枚等配)
+        # =========================================================
         fin_coll = adsk.core.ObjectCollection.create()
-        fin_coll.add(base_fin_body)
-        
+        fin_coll.add(fin_body)
+
         patternInput = patterns.createInput(fin_coll, zAxis)
         patternInput.quantity = adsk.core.ValueInput.createByString("4")
         patternInput.totalAngle = adsk.core.ValueInput.createByReal(2.0 * math.pi)
         patternInput.isSymmetric = False
-        pattern_feature = patterns.add(patternInput)
+        pattern_feat = patterns.add(patternInput)
 
         ui.messageBox(
-            '【機体③】鉄壁安全重視モデルの自動モデリングが成功しました！\n\n'
+            '【機体③】鉄壁安全重視モデルのモデリングが成功しました！\n\n'
             '・全長: 250 mm (ノーズ 120 mm + 胴体 130 mm)\n'
             '・外径: 24 mm\n'
             '・翼: 4枚 正十字完全対称 (スパン 59 mm × ルート 33 mm)\n'
