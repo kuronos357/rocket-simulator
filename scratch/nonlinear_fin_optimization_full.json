@@ -1,0 +1,157 @@
+{
+  "total_evaluated": 136080,
+  "eval_time_sec": 0.004,
+  "summary_records": [
+    {
+      "category": "直線クリップトデルタ (Baseline: p_le=1.0, p_te=1.0)",
+      "best_3fin": {
+        "hang_time_s": 14.03,
+        "apogee_m": 59.58,
+        "margin_cal": 1.01,
+        "fin_mass_g": 1.52,
+        "span_mm": 100.0,
+        "cr_mm": 22.0,
+        "ct_mm": 2.6399999999999997,
+        "p_le": 1.0,
+        "p_te": 1.0
+      },
+      "best_4fin": {
+        "hang_time_s": 13.91,
+        "apogee_m": 60.02,
+        "margin_cal": 1.02,
+        "fin_mass_g": 1.39,
+        "span_mm": 80.0,
+        "cr_mm": 16.0,
+        "ct_mm": 1.5,
+        "p_le": 1.0,
+        "p_te": 1.0
+      }
+    },
+    {
+      "category": "オージー/ゴシック翼 (凸前縁: p_le >= 2.2, p_te == 1.0)",
+      "best_3fin": {
+        "hang_time_s": 13.9,
+        "apogee_m": 58.21,
+        "margin_cal": 1.04,
+        "fin_mass_g": 1.85,
+        "span_mm": 85.0,
+        "cr_mm": 16.0,
+        "ct_mm": 2.56,
+        "p_le": 2.2,
+        "p_te": 1.0
+      },
+      "best_4fin": {
+        "hang_time_s": 13.75,
+        "apogee_m": 58.67,
+        "margin_cal": 1.01,
+        "fin_mass_g": 1.71,
+        "span_mm": 75.0,
+        "cr_mm": 16.0,
+        "ct_mm": 1.5,
+        "p_le": 2.2,
+        "p_te": 1.0
+      }
+    },
+    {
+      "category": "クレセント/三日月翼 (前縁凸・後縁後退: p_le >= 1.8, p_te >= 1.3)",
+      "best_3fin": {
+        "hang_time_s": 13.95,
+        "apogee_m": 58.68,
+        "margin_cal": 1.04,
+        "fin_mass_g": 1.73,
+        "span_mm": 100.0,
+        "cr_mm": 16.0,
+        "ct_mm": 2.56,
+        "p_le": 1.8,
+        "p_te": 1.3
+      },
+      "best_4fin": {
+        "hang_time_s": 13.79,
+        "apogee_m": 58.97,
+        "margin_cal": 1.02,
+        "fin_mass_g": 1.64,
+        "span_mm": 70.0,
+        "cr_mm": 16.0,
+        "ct_mm": 1.5,
+        "p_le": 1.8,
+        "p_te": 1.3
+      }
+    },
+    {
+      "category": "放物線前縁翼 (マイルド凸: p_le == 1.4, p_te == 1.0)",
+      "best_3fin": {
+        "hang_time_s": 13.98,
+        "apogee_m": 58.99,
+        "margin_cal": 1.07,
+        "fin_mass_g": 1.66,
+        "span_mm": 100.0,
+        "cr_mm": 16.0,
+        "ct_mm": 2.56,
+        "p_le": 1.4,
+        "p_te": 1.0
+      },
+      "best_4fin": {
+        "hang_time_s": 13.83,
+        "apogee_m": 59.33,
+        "margin_cal": 1.0,
+        "fin_mass_g": 1.55,
+        "span_mm": 70.0,
+        "cr_mm": 16.0,
+        "ct_mm": 1.92,
+        "p_le": 1.4,
+        "p_te": 1.0
+      }
+    },
+    {
+      "category": "凹前縁フィレット翼 (根元拡大: p_le <= 0.8, p_te == 1.0)",
+      "best_3fin": {
+        "hang_time_s": 14.07,
+        "apogee_m": 59.92,
+        "margin_cal": 1.03,
+        "fin_mass_g": 1.44,
+        "span_mm": 100.0,
+        "cr_mm": 28.0,
+        "ct_mm": 2.24,
+        "p_le": 0.8,
+        "p_te": 1.0
+      },
+      "best_4fin": {
+        "hang_time_s": 14.04,
+        "apogee_m": 61.14,
+        "margin_cal": 1.04,
+        "fin_mass_g": 1.14,
+        "span_mm": 95.0,
+        "cr_mm": 16.0,
+        "ct_mm": 1.5,
+        "p_le": 0.8,
+        "p_te": 1.0
+      }
+    }
+  ],
+  "best_asym_3fin": {
+    "span_mm": 100.0,
+    "cr_mm": 34.0,
+    "ct_mm": 2.72,
+    "te_sweep_mm": 36.39702342662024,
+    "overhang_mm": 20.0,
+    "p_le": 0.8,
+    "p_te": 1.6,
+    "margin_cal": 1.01,
+    "hang_time_s": 14.13,
+    "apogee_m": 60.61,
+    "fin_mass_g": 1.28
+  },
+  "best_sym_4fin": {
+    "span_mm": 95.0,
+    "cr_mm": 19.0,
+    "ct_mm": 4.18,
+    "te_sweep_mm": 34.57717225528922,
+    "overhang_mm": 20.0,
+    "p_le": 0.8,
+    "p_te": 1.6,
+    "margin_cal": 1.01,
+    "hang_time_s": 14.15,
+    "apogee_m": 62.14,
+    "fin_mass_g": 0.92
+  }
+}

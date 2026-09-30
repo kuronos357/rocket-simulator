@@ -93,6 +93,23 @@ def evaluate_physically_correct_fins(
     margin_yaw_cal = (total_cg_mm - cp_yaw) / D
     margin_eff_cal = min(margin_pitch_cal, margin_yaw_cal)
     
+    if margin_eff_cal < 0.50:
+        return {
+            "span": span_mm,
+            "cr": cr_mm,
+            "theta": theta_deg,
+            "v_scale": v_scale,
+            "is_4fin": is_4fin,
+            "fin_mass_g": fin_mass_g,
+            "total_mass_g": total_launch_mass_g,
+            "margin_pitch": margin_pitch_cal,
+            "margin_yaw": margin_yaw_cal,
+            "margin_eff": margin_eff_cal,
+            "apogee_m": 0.0,
+            "total_time_s": 0.0,
+            "v_descent": 0.0
+        }
+    
     # Flight Simulation
     S_ref = math.pi * (R * 1e-3)**2
     wet_area_m2 = (opt.wet_area_body_cm2 + total_fin_area_cm2 * 2.0) * 1e-4
@@ -100,36 +117,36 @@ def evaluate_physically_correct_fins(
     Cd = 0.0045 * (wet_area_m2 / S_ref) + 0.08 + cd_interference
     
     motor_obj = get_motor(opt.motor_id)
-    avg_thrust = motor_obj.total_impulse / motor_obj.burn_time if motor_obj.burn_time > 0 else 5.0
     burn_t = motor_obj.burn_time
-    m_avg_kg = (total_launch_mass_g - motor_obj.propellant_mass_g * 0.5) * 1e-3
-    v_bo = max(0.0, (avg_thrust / m_avg_kg - 9.8) * burn_t)
-    h_bo = 0.5 * v_bo * burn_t
-    
     burnout_mass_g = total_launch_mass_g - motor_obj.propellant_mass_g
-    k_drag = 0.5 * 1.225 * Cd * S_ref / (burnout_mass_g * 1e-3)
-    
-    if k_drag > 0 and v_bo > 0:
-        h_coast = (1.0 / (2.0 * k_drag)) * math.log(1.0 + k_drag * v_bo**2 / 9.8)
-        t_coast = (1.0 / math.sqrt(9.8 * k_drag)) * math.atan(v_bo * math.sqrt(k_drag / 9.8))
-    else:
-        h_coast = 0.0
-        t_coast = 0.0
-        
-    apogee_m = h_bo + h_coast
-    
-    # Descent phase: Horizontal descent crossflow
-    streamer_cd_A = s.recovery_cd * (s.recovery_area_cm2 * 1e-4) # m^2
-    wet_body_m2 = opt.wet_area_body_cm2 * 1e-4
-    body_cd_A = (1.1 / math.pi) * wet_body_m2
-    
-    proj_fins_m2 = (2.0 * area_1side_cm2 * math.cos(theta_rad) + 0.15 * num_v * area_1v_cm2) * 1e-4
-    fins_cd_A = 1.25 * proj_fins_m2
-    
-    total_cd_A = streamer_cd_A + body_cd_A + fins_cd_A
-    v_descent = math.sqrt((2.0 * (burnout_mass_g * 1e-3) * 9.8) / (1.225 * total_cd_A))
+
+    # Fast coupled numerical integration for boost and coast (dt=0.005s)
+    dt = 0.005
+    t = 0.0
+    v = 0.0
+    z = 0.0
+    rho = 1.225
+    g = 9.80665
+
+    while t < 10.0:
+        mass_kg = (burn_t > 0 and motor_obj.get_mass_g(t) * 1e-3 + (total_launch_mass_g - motor_obj.total_mass_g) * 1e-3) if t <= burn_t else (burnout_mass_g * 1e-3)
+        thrust = motor_obj.get_thrust(t) if t <= burn_t else 0.0
+        drag = 0.5 * rho * (v**2) * Cd * S_ref * (1.0 if v >= 0 else -1.0)
+        acc = (thrust - drag - mass_kg * g) / mass_kg
+        v += acc * dt
+        z += v * dt
+        if v <= 0.0 and z > 1.0:
+            break
+        t += dt
+
+    apogee_m = max(z, 1.0)
+    t_to_apogee = t
+
+    # Descent phase: OpenRocket standard streamer model (CdA = 0.0055 m2)
+    rec_cdA = 0.0055
+    v_descent = math.sqrt((2.0 * (burnout_mass_g * 1e-3) * g) / (rho * rec_cdA))
     t_descent = apogee_m / v_descent if v_descent > 0 else 0.0
-    total_time_s = burn_t + t_coast + t_descent
+    total_time_s = t_to_apogee + t_descent
     
     return {
         "span": span_mm,

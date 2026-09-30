@@ -22,8 +22,8 @@
       "motor_total_mass_g": 15.0,
       "motor_propellant_mass_g": 1.56,
       "motor_burnout_mass_g": 13.44,
-      "motor_total_impulse_Ns": 1.9925000000000002,
-      "motor_burn_time_s": 0.32
+      "motor_total_impulse_Ns": 1.129787725,
+      "motor_burn_time_s": 0.33
     },
     "fins": {
       "fin_count": 4,
@@ -40,7 +40,7 @@
         "sweep_mm": 31.0,
         "shape": "直角三角形デルタ翼 (後退角前縁, 後縁ストレート)",
         "area_per_fin_cm2": 8.525,
-        "mass_per_fin_g": 0.4228400000000001,
+        "mass_per_fin_g": 0.4177250000000001,
         "dihedral_angle_deg": 0.0,
         "cg_local_from_le_root_mm": 10.333333333333334
       },
@@ -54,7 +54,7 @@
         "sweep_mm": 13.950000000000001,
         "shape": "直角三角形デルタ翼 (縮小相似形)",
         "area_per_fin_cm2": 6.905250000000001,
-        "mass_per_fin_g": 0.34250040000000015,
+        "mass_per_fin_g": 0.33835725000000016,
         "cg_local_from_le_root_mm": 9.3
       },
       "total_fin_mass_g": 1.5306808000000003,
@@ -82,19 +82,19 @@
       "cna_body": 2.0,
       "cna_pitch_fins": 10.278128502960412,
       "cna_yaw_fins": 8.438378406584569,
-      "descent_total_cd_a_m2": 0.013889740436694276
+      "descent_total_cd_a_m2": 0.0055
     },
     "flight_performance": {
-      "burnout_velocity_ms": 63.81808675806831,
-      "burnout_altitude_m": 10.21089388129093,
-      "apogee_altitude_m": 145.5635138631934,
-      "time_to_apogee_s": 5.231779398096475,
-      "burn_time_s": 0.32,
-      "coast_time_s": 4.911779398096475,
-      "max_acceleration_g": 19.804852079716564,
-      "descent_velocity_ms": 5.777715006201038,
-      "descent_time_s": 25.19395880671939,
-      "total_flight_time_s": 30.425738204815865
+      "burnout_velocity_ms": 34.333465804676095,
+      "burnout_altitude_m": 4.706949624422336,
+      "apogee_altitude_m": 56.06144266026341,
+      "time_to_apogee_s": 3.483999999999838,
+      "burn_time_s": 0.33,
+      "coast_time_s": 3.153999999999838,
+      "max_acceleration_g": 25.898280283824025,
+      "descent_velocity_ms": 9.184787989724507,
+      "descent_time_s": 6.103727459249165,
+      "total_flight_time_s": 9.587727459249002
     }
   },
   "candidate_1b_4fin_asym_59x33": {
@@ -120,8 +120,8 @@
       "motor_total_mass_g": 15.0,
       "motor_propellant_mass_g": 1.56,
       "motor_burnout_mass_g": 13.44,
-      "motor_total_impulse_Ns": 1.9925000000000002,
-      "motor_burn_time_s": 0.32
+      "motor_total_impulse_Ns": 1.129787725,
+      "motor_burn_time_s": 0.33
     },
     "fins": {
       "fin_count": 4,
@@ -138,7 +138,7 @@
         "sweep_mm": 33.0,
         "shape": "直角三角形デルタ翼 (後退角前縁, 後縁ストレート)",
         "area_per_fin_cm2": 9.735,
-        "mass_per_fin_g": 0.4828560000000001,
+        "mass_per_fin_g": 0.47701500000000013,
         "dihedral_angle_deg": 0.0,
         "cg_local_from_le_root_mm": 11.0
       },
@@ -152,7 +152,7 @@
         "sweep_mm": 14.025,
         "shape": "直角三角形デルタ翼 (縮小相似形)",
         "area_per_fin_cm2": 7.0335375,
-        "mass_per_fin_g": 0.34886346000000007,
+        "mass_per_fin_g": 0.34464333750000015,
         "cg_local_from_le_root_mm": 9.35
       },
       "total_fin_mass_g": 1.6634389200000006,
@@ -180,19 +180,19 @@
       "cna_body": 2.0,
       "cna_pitch_fins": 11.66471082400816,
       "cna_yaw_fins": 8.601260617844801,
-      "descent_total_cd_a_m2": 0.014197051217944276
+      "descent_total_cd_a_m2": 0.0055
     },
     "flight_performance": {
-      "burnout_velocity_ms": 63.52072587896103,
-      "burnout_altitude_m": 10.163316140633766,
-      "apogee_altitude_m": 144.12783901431703,
-      "time_to_apogee_s": 5.205820019589944,
-      "burn_time_s": 0.32,
-      "coast_time_s": 4.885820019589944,
-      "max_acceleration_g": 19.714801972153893,
-      "descent_velocity_ms": 5.72791571947278,
-      "descent_time_s": 25.162353301452402,
-      "total_flight_time_s": 30.368173321042345
+      "burnout_velocity_ms": 34.164127589110834,
+      "burnout_altitude_m": 4.683663189567964,
+      "apogee_altitude_m": 55.514709411141986,
+      "time_to_apogee_s": 3.4679999999998397,
+      "burn_time_s": 0.33,
+      "coast_time_s": 3.1379999999998396,
+      "max_acceleration_g": 25.77648800956731,
+      "descent_velocity_ms": 9.205802405231426,
+      "descent_time_s": 6.030404191555792,
+      "total_flight_time_s": 9.498404191555633
     }
   },
   "candidate_2_3fin_asym_76x44": {
@@ -218,8 +218,8 @@
       "motor_total_mass_g": 15.0,
       "motor_propellant_mass_g": 1.56,
       "motor_burnout_mass_g": 13.44,
-      "motor_total_impulse_Ns": 1.9925000000000002,
-      "motor_burn_time_s": 0.32
+      "motor_total_impulse_Ns": 1.129787725,
+      "motor_burn_time_s": 0.33
     },
     "fins": {
       "fin_count": 3,
@@ -236,7 +236,7 @@
         "sweep_mm": 44.0,
         "shape": "直角三角形デルタ翼 (後退角前縁, 後縁ストレート)",
         "area_per_fin_cm2": 16.72,
-        "mass_per_fin_g": 0.829312,
+        "mass_per_fin_g": 0.8192800000000001,
         "dihedral_angle_deg": 35.0,
         "cg_local_from_le_root_mm": 14.666666666666666
       },
@@ -250,7 +250,7 @@
         "sweep_mm": 15.399999999999999,
         "shape": "直角三角形デルタ翼 (縮小相似形)",
         "area_per_fin_cm2": 8.192799999999998,
-        "mass_per_fin_g": 0.40636288,
+        "mass_per_fin_g": 0.40144720000000006,
         "cg_local_from_le_root_mm": 10.266666666666666
       },
       "total_fin_mass_g": 2.06498688,
@@ -278,19 +278,19 @@
       "cna_body": 2.0,
       "cna_pitch_fins": 12.924739995903948,
       "cna_yaw_fins": 11.25400335546544,
-      "descent_total_cd_a_m2": 0.015077214106822261
+      "descent_total_cd_a_m2": 0.0055
     },
     "flight_performance": {
-      "burnout_velocity_ms": 62.63717436794514,
-      "burnout_altitude_m": 10.021947898871224,
-      "apogee_altitude_m": 140.57741332463078,
-      "time_to_apogee_s": 5.144871108109074,
-      "burn_time_s": 0.32,
-      "coast_time_s": 4.824871108109074,
-      "max_acceleration_g": 19.447114551017787,
-      "descent_velocity_ms": 5.596414024627523,
-      "descent_time_s": 25.119194667515167,
-      "total_flight_time_s": 30.26406577562424
+      "burnout_velocity_ms": 33.66682672755517,
+      "burnout_altitude_m": 4.614818164159842,
+      "apogee_altitude_m": 54.034054955473444,
+      "time_to_apogee_s": 3.4239999999998445,
+      "burn_time_s": 0.33,
+      "coast_time_s": 3.0939999999998444,
+      "max_acceleration_g": 25.4173139453181,
+      "descent_velocity_ms": 9.269073853965537,
+      "descent_time_s": 5.82949880503502,
+      "total_flight_time_s": 9.253498805034864
     }
   },
   "candidate_3_high_stability_59x33": {
@@ -316,8 +316,8 @@
       "motor_total_mass_g": 15.0,
       "motor_propellant_mass_g": 1.56,
       "motor_burnout_mass_g": 13.44,
-      "motor_total_impulse_Ns": 1.9925000000000002,
-      "motor_burn_time_s": 0.32
+      "motor_total_impulse_Ns": 1.129787725,
+      "motor_burn_time_s": 0.33
     },
     "fins": {
       "fin_count": 4,
@@ -334,7 +334,7 @@
         "sweep_mm": 33.0,
         "shape": "直角三角形デルタ翼 (後退角前縁, 後縁ストレート)",
         "area_per_fin_cm2": 9.735,
-        "mass_per_fin_g": 0.4828560000000001,
+        "mass_per_fin_g": 0.47701500000000013,
         "dihedral_angle_deg": 0.0,
         "cg_local_from_le_root_mm": 11.0
       },
@@ -348,7 +348,7 @@
         "sweep_mm": 16.5,
         "shape": "直角三角形デルタ翼 (縮小相似形)",
         "area_per_fin_cm2": 9.735,
-        "mass_per_fin_g": 0.4828560000000001,
+        "mass_per_fin_g": 0.47701500000000013,
         "cg_local_from_le_root_mm": 11.0
       },
       "total_fin_mass_g": 1.9314240000000005,
@@ -376,19 +376,19 @@
       "cna_body": 2.0,
       "cna_pitch_fins": 11.66471082400816,
       "cna_yaw_fins": 11.66471082400816,
-      "descent_total_cd_a_m2": 0.014298356061694276
+      "descent_total_cd_a_m2": 0.0055
     },
     "flight_performance": {
-      "burnout_velocity_ms": 60.80827753687825,
-      "burnout_altitude_m": 9.72932440590052,
-      "apogee_altitude_m": 136.1668554788865,
-      "time_to_apogee_s": 5.087639201207879,
-      "burn_time_s": 0.32,
-      "coast_time_s": 4.767639201207879,
-      "max_acceleration_g": 18.89244419926287,
-      "descent_velocity_ms": 5.830561894080257,
-      "descent_time_s": 23.35398507940308,
-      "total_flight_time_s": 28.44162428061096
+      "burnout_velocity_ms": 32.66253545316232,
+      "burnout_altitude_m": 4.473792345394762,
+      "apogee_altitude_m": 51.55131823364681,
+      "time_to_apogee_s": 3.355999999999852,
+      "burn_time_s": 0.33,
+      "coast_time_s": 3.025999999999852,
+      "max_acceleration_g": 24.685487738430435,
+      "descent_velocity_ms": 9.404147214327208,
+      "descent_time_s": 5.481764274713653,
+      "total_flight_time_s": 8.837764274713505
     }
   }
 }

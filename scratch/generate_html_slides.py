@@ -234,38 +234,38 @@ def generate_html_deck():
     <div class="title">選定された3大最適化モデルの性能比較</div>
     <div class="grid-3">
       <div class="card" style="border-top: 0.3vw solid #2EC4B6;">
-        <span class="badge" style="background: rgba(46,196,182,0.2); color: #2EC4B6;">CHAMPION: 高度＆滞空</span>
+        <span class="badge" style="background: rgba(46,196,182,0.2); color: #2EC4B6;">CHAMPION: 最小抗力＆最長滞空</span>
         <div class="card-title" style="color: #2EC4B6;">機体①：アンバランス4枚翼</div>
         <div class="stat-row"><span>静的安定マージン</span><span class="stat-val">+0.791 cal</span></div>
-        <div class="stat-row"><span>最高到達高度</span><span class="stat-val">145.6 m</span></div>
-        <div class="stat-row"><span>降下速度</span><span class="stat-val">5.78 m/s</span></div>
-        <div class="stat-row"><span>合計滞空時間</span><span class="stat-val">30.43 秒</span></div>
+        <div class="stat-row"><span>最高到達高度</span><span class="stat-val">55.0 m (OR検証済)</span></div>
+        <div class="stat-row"><span>降下速度</span><span class="stat-val">9.18 m/s</span></div>
+        <div class="stat-row"><span>合計滞空時間</span><span class="stat-val">9.59 秒 (OR: 8.3秒)</span></div>
         <p style="font-size: 0.85vw; color: #94A3B8; margin-top: 1vw;">
-          主翼55×31mm(水平2枚) ＋ 尾翼49.5×27.9mm(垂直2枚, kv=0.90)。最高高度を叩き出す最軽量モデル。
+          主翼55×31mm(水平2枚) ＋ 尾翼49.5×27.9mm(垂直2枚, kv=0.90)。投影面積を最小化し安定と滞空を両立。
         </p>
       </div>
 
       <div class="card" style="border-top: 0.3vw solid #FFD166;">
-        <span class="badge" style="background: rgba(255,209,102,0.2); color: #FFD166;">SWEET SPOT: 最遅降下</span>
+        <span class="badge" style="background: rgba(255,209,102,0.2); color: #FFD166;">SWEET SPOT: 高復元性</span>
         <div class="card-title" style="color: #FFD166;">機体②：逆Y字3枚翼 (35°)</div>
         <div class="stat-row"><span>静的安定マージン</span><span class="stat-val">+0.858 cal</span></div>
-        <div class="stat-row"><span>最高到達高度</span><span class="stat-val">140.5 m</span></div>
-        <div class="stat-row"><span>降下速度</span><span class="stat-val">5.59 m/s (全機最遅)</span></div>
-        <div class="stat-row"><span>合計滞空時間</span><span class="stat-val">30.13 秒</span></div>
+        <div class="stat-row"><span>最高到達高度</span><span class="stat-val">52.4 m (OR検証済)</span></div>
+        <div class="stat-row"><span>降下速度</span><span class="stat-val">9.27 m/s</span></div>
+        <div class="stat-row"><span>合計滞空時間</span><span class="stat-val">9.25 秒 (OR: 8.0秒)</span></div>
         <p style="font-size: 0.85vw; color: #94A3B8; margin-top: 1vw;">
-          主翼76×44mm(35°下反角2枚) ＋ 尾翼53.2mm(垂直1枚)。大面積主翼が空気を受け止めて最長滞空。
+          主翼76×44mm(35°下反角2枚) ＋ 尾翼52.9mm(垂直1枚)。非平面下反角によりロール・ヨー連成の自己復元性を発揮。
         </p>
       </div>
 
       <div class="card" style="border-top: 0.3vw solid #3B82F6;">
         <span class="badge" style="background: rgba(59,130,246,0.2); color: #3B82F6;">HIGH STABILITY: 強風直進</span>
-        <div class="card-title" style="color: #3B82F6;">機体③：完全対称4枚翼</div>
+        <div class="card-title" style="color: #3B82F6;">機体③：完全対称3枚翼</div>
         <div class="stat-row"><span>静的安定マージン</span><span class="stat-val">+1.220 cal</span></div>
-        <div class="stat-row"><span>最高到達高度</span><span class="stat-val">133.4 m</span></div>
-        <div class="stat-row"><span>降下速度</span><span class="stat-val">6.02 m/s</span></div>
-        <div class="stat-row"><span>合計滞空時間</span><span class="stat-val">28.44 秒</span></div>
+        <div class="stat-row"><span>最高到達高度</span><span class="stat-val">55.8 m (OR検証済)</span></div>
+        <div class="stat-row"><span>降下速度</span><span class="stat-val">9.40 m/s</span></div>
+        <div class="stat-row"><span>合計滞空時間</span><span class="stat-val">8.84 秒 (OR: 8.3秒)</span></div>
         <p style="font-size: 0.85vw; color: #94A3B8; margin-top: 1vw;">
-          十字翼59×33mm(完全対称4枚)。強風コンディション下でも風見鶏効果に流されず矢のように直進。
+          対称翼59×33mm(120°配置3枚)。十分な復元モーメントを確保し、強風下でも風見鶏効果に負けず矢のように直進。
         </p>
       </div>
     </div>
@@ -323,18 +323,18 @@ def generate_html_deck():
         </div>
       </div>
       <div class="card" style="border-top: 0.3vw solid #FFD166;">
-        <div class="card-title" style="color: #FFD166;">最高高度 +15.0 m UP</div>
+        <div class="card-title" style="color: #FFD166;">最高高度 +6.5 m UP</div>
         <div class="card-body">
-          ・機体①: 145.6 m → <b>162.0 m</b><br>
-          ・機体②: 140.5 m → <b>156.0 m</b><br>
-          ・燃焼終了速度が 64m/s → <b>71m/s (時速256km)</b> へ跳ね上がる
+          ・機体①: 55.0 m → <b>61.5 m</b><br>
+          ・機体②: 52.4 m → <b>58.2 m</b><br>
+          ・燃焼終了速度が 34m/s → <b>38m/s (時速137km)</b> へ向上
         </div>
       </div>
       <div class="card" style="border-top: 0.3vw solid #3B82F6;">
-        <div class="card-title" style="color: #3B82F6;">滞空時間 +3.6〜5.8 秒</div>
+        <div class="card-title" style="color: #3B82F6;">滞空時間 +1.5 秒</div>
         <div class="card-body">
-          ・軽くなったことで降下速度が約0.35m/s減速 (5.59→<b>5.25m/s</b>)<br>
-          ・「高く上がる」×「ゆっくり降りる」の相乗効果で<b>36秒超え</b>へ
+          ・軽くなったことで降下速度が約0.5m/s減速 (9.2→<b>8.7m/s</b>)<br>
+          ・「高く上がる」×「ゆっくり降りる」の相乗効果で<b>11秒超え</b>へ
         </div>
       </div>
     </div>

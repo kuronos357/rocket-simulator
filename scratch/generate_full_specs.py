@@ -92,39 +92,50 @@ def compute_detailed_model(spec: RocketSpec, span_mm: float, cr_mm: float, theta
     Cd = 0.0045 * (wet_area_m2 / S_ref) + 0.08 + cd_interference
 
     motor_obj = get_motor(opt.motor_id)
-    avg_thrust = motor_obj.total_impulse / motor_obj.burn_time if motor_obj.burn_time > 0 else 5.0
     burn_t = motor_obj.burn_time
-    m_avg_kg = (total_launch_mass_g - motor_obj.propellant_mass_g * 0.5) * 1e-3
-    v_bo = max(0.0, (avg_thrust / m_avg_kg - 9.8) * burn_t)
-    h_bo = 0.5 * v_bo * burn_t
-
     burnout_mass_g = total_launch_mass_g - motor_obj.propellant_mass_g
-    k_drag = 0.5 * 1.225 * Cd * S_ref / (burnout_mass_g * 1e-3)
 
-    if k_drag > 0 and v_bo > 0:
-        h_coast = (1.0 / (2.0 * k_drag)) * math.log(1.0 + k_drag * v_bo**2 / 9.8)
-        t_coast = (1.0 / math.sqrt(9.8 * k_drag)) * math.atan(v_bo * math.sqrt(k_drag / 9.8))
-    else:
-        h_coast = 0.0
-        t_coast = 0.0
+    # Coupled numerical integration for boost and coast (dt=0.002s)
+    dt = 0.002
+    t = 0.0
+    v = 0.0
+    z = 0.0
+    rho = 1.225
+    g = 9.80665
+    max_accel_g = 0.0
+    max_vel_m_s = 0.0
+    v_bo = 0.0
+    h_bo = 0.0
 
-    apogee_m = h_bo + h_coast
+    while t < 15.0:
+        mass_kg = (burn_t > 0 and motor_obj.get_mass_g(t) * 1e-3 + (total_launch_mass_g - motor_obj.total_mass_g) * 1e-3) if t <= burn_t else (burnout_mass_g * 1e-3)
+        thrust = motor_obj.get_thrust(t) if t <= burn_t else 0.0
+        drag = 0.5 * rho * (v**2) * Cd * S_ref * (1.0 if v >= 0 else -1.0)
+        acc = (thrust - drag - mass_kg * g) / mass_kg
+        acc_g = acc / g
+        if acc_g > max_accel_g:
+            max_accel_g = acc_g
+        v += acc * dt
+        if v > max_vel_m_s:
+            max_vel_m_s = v
+        z += v * dt
+        if t <= burn_t:
+            v_bo = v
+            h_bo = z
+        if v <= 0.0 and z > 1.0:
+            break
+        t += dt
 
-    # Descent phase: Horizontal descent crossflow
-    streamer_cd_A = s.recovery_cd * (s.recovery_area_cm2 * 1e-4) # m^2
-    wet_body_m2 = opt.wet_area_body_cm2 * 1e-4
-    body_cd_A = (1.1 / math.pi) * wet_body_m2
+    apogee_m = max(z, 1.0)
+    t_to_apogee = t
+    t_coast = max(0.0, t_to_apogee - burn_t)
 
-    proj_fins_m2 = (2.0 * area_1side_cm2 * math.cos(theta_rad) + 0.15 * num_v * area_1v_cm2) * 1e-4
-    fins_cd_A = 1.25 * proj_fins_m2
-
-    total_cd_A = streamer_cd_A + body_cd_A + fins_cd_A
-    v_descent = math.sqrt((2.0 * (burnout_mass_g * 1e-3) * 9.8) / (1.225 * total_cd_A))
+    # Streamer descent
+    rec_cdA = 0.0055
+    v_descent = math.sqrt((2.0 * (burnout_mass_g * 1e-3) * g) / (rho * rec_cdA))
     t_descent = apogee_m / v_descent if v_descent > 0 else 0.0
-    total_time_s = burn_t + t_coast + t_descent
-
-    # Max accel
-    max_accel_g = (avg_thrust / (total_launch_mass_g * 1e-3) - 9.8) / 9.8
+    total_time_s = t_to_apogee + t_descent
+    total_cd_A = rec_cdA
 
     return {
         "spec": {

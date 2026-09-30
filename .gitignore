@@ -14,6 +14,15 @@ input/*
 # Simulation & Optimization outputs (Plots, figures, generated specs)
 output/*
 !output/.gitkeep
+!output/*.png
+!output/*.ork
+
+# Large intermediate JSONs in scratch
+scratch/*_results.json
+scratch/massive_extended_sweep_results.json
+scratch/*.class
+scratch/*.csv
+scratch/sim_out.txt
 
 # Exported large binaries
 export/*.step
