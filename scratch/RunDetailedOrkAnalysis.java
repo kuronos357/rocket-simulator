@@ -66,19 +66,19 @@ public class RunDetailedOrkAnalysis {
                 List<Double> vals = branch.get(type);
                 if (vals == null || vals.isEmpty()) continue;
                 
-                if (name.equalsIgnoreCase("Time") || name.equals("時間")) {
+                if (name.equalsIgnoreCase("Time")) {
                     times = vals;
-                } else if (name.contains("CG") && name.contains("位置") || name.equalsIgnoreCase("CG location")) {
+                } else if (name.equalsIgnoreCase("CG location")) {
                     cgs = vals;
-                } else if (name.contains("CP") && name.contains("位置") || name.equalsIgnoreCase("CP location")) {
+                } else if (name.equalsIgnoreCase("CP location")) {
                     cps = vals;
-                } else if (name.toLowerCase().contains("stability margin") || name.toLowerCase().contains("安定マージン")) {
+                } else if (name.equalsIgnoreCase("Stability margin calibers")) {
                     margins = vals;
-                } else if (name.toLowerCase().contains("質量") || name.toLowerCase().contains("mass")) {
+                } else if (name.equalsIgnoreCase("Mass")) {
                     if (masses == null) masses = vals;
-                } else if (name.equalsIgnoreCase("Velocity") || name.equals("速度") || name.equalsIgnoreCase("Total velocity")) {
+                } else if (name.equalsIgnoreCase("Vertical velocity") || name.equalsIgnoreCase("Total velocity")) {
                     if (vels == null) vels = vals;
-                } else if (name.equalsIgnoreCase("Altitude") || name.equals("高度")) {
+                } else if (name.equalsIgnoreCase("Altitude")) {
                     if (alts == null) alts = vals;
                 }
             }
@@ -150,6 +150,22 @@ public class RunDetailedOrkAnalysis {
             System.out.printf("FLIGHT_TIME_S=%.2f\n", data.getFlightTime());
             System.out.printf("GROUND_HIT_VEL_MS=%.2f\n", data.getGroundHitVelocity());
             System.out.printf("LAUNCH_ROD_VEL_MS=%.2f\n", data.getLaunchRodVelocity());
+
+            if (times != null && alts != null) {
+                String csvName = "output/" + orkFile.getName().replace(".ork", "_traj.csv");
+                try (java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.FileWriter(csvName))) {
+                    pw.println("time_s,altitude_m,velocity_ms");
+                    for (int i = 0; i < times.size(); i++) {
+                        double t = times.get(i);
+                        double a = (alts != null && i < alts.size()) ? alts.get(i) : 0.0;
+                        double v = (vels != null && i < vels.size()) ? vels.get(i) : 0.0;
+                        pw.printf(java.util.Locale.US, "%.4f,%.4f,%.4f\n", t, a, v);
+                    }
+                    System.out.println("SAVED_CSV=" + csvName);
+                } catch (Exception ex) {
+                    System.err.println("Failed to write CSV: " + ex.getMessage());
+                }
+            }
             System.out.println("ANALYSIS_END");
 
         } catch (Throwable t) {
